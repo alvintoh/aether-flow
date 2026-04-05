@@ -28,9 +28,16 @@
     }
   },
   "assist": {
+    "enabled": true,
     "actions": {
+      "recommended": true,
       "source": {
-        "organizeImports": "on"
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "identifierOrder": "natural"
+          }
+        }
       }
     }
   }
