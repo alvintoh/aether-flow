@@ -65,32 +65,3 @@ bun --bun run prisma [cmd]   # run prisma CLI (must use --bun flag)
 | `/arch-diagram` | Generate Excalidraw architecture diagrams → `docs/diagrams/` |
 | `/build-readme` | Orchestrate all agents to assemble a complete README.md |
 
-## Global Skills (plugins)
-
-| Skill | Purpose |
-|-------|---------|
-| `/simplify` | Review and clean up recently changed code |
-| `/commit-review` | Stage, review, and propose a conventional commit |
-| `/claude-api` | Build apps with the Claude API / Anthropic SDK |
-| `/loop [interval] [cmd]` | Run a command on a recurring interval |
-| `/schedule` | Create/manage scheduled remote agents (cron) |
-| `/frontend-design:frontend-design` | Build polished, production-grade UI |
-| `/feature-dev:feature-dev` | Guided feature development with architecture focus |
-| `/code-review:code-review` | Review a pull request |
-| `/skill-creator:skill-creator` | Create or improve skills |
-| `/claude-md-management:claude-md-improver` | Audit and improve CLAUDE.md files |
-
-### Superpowers skills
-
-| Skill | When to use |
-|-------|------------|
-| `superpowers:brainstorming` | Before any creative work or new feature |
-| `superpowers:writing-plans` | Before touching code on multi-step tasks |
-| `superpowers:executing-plans` | When running a written implementation plan |
-| `superpowers:systematic-debugging` | When encountering any bug or test failure |
-| `superpowers:test-driven-development` | Before writing implementation code |
-| `superpowers:dispatching-parallel-agents` | When 2+ independent tasks can run in parallel |
-| `superpowers:requesting-code-review` | Before merging or after completing a feature |
-| `superpowers:verification-before-completion` | Before claiming work is complete |
-| `superpowers:finishing-a-development-branch` | When implementation is done, deciding how to integrate |
-| `superpowers:using-git-worktrees` | Before feature work needing isolation |
