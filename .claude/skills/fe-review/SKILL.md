@@ -1,5 +1,5 @@
 ---
-name: review-fe
+name: fe-review
 description: Review all frontend components in src/app/ against TypeScript, React, Next.js App Router, performance, accessibility, and security best practices. Runs lint and typecheck first, then returns a prioritised findings list.
 ---
 

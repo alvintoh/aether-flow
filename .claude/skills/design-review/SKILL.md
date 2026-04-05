@@ -1,5 +1,5 @@
 ---
-name: review-design
+name: design-review
 description: Review all components in src/components/ against UI/UX best practices — spacing, visual hierarchy, typography, colour, responsive design, motion, and accessibility. Returns a prioritised findings list.
 ---
 

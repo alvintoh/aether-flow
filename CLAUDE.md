@@ -60,8 +60,8 @@ bun --bun run prisma [cmd]   # run prisma CLI (must use --bun flag)
 | Skill | Trigger |
 |-------|---------|
 | `/commit-review` | Stage all changes, review, suggest commit message |
-| `/review-fe` | Full frontend review — lint, typecheck, best practices |
-| `/review-design` | UI/UX review of all components in `src/components/` |
+| `/fe-review` | Full frontend review — lint, typecheck, best practices |
+| `/design-review` | UI/UX review of all components in `src/components/` |
 | `/arch-diagram` | Generate Excalidraw architecture diagrams → `docs/diagrams/` |
 | `/build-readme` | Orchestrate all agents to assemble a complete README.md |
 
