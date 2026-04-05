@@ -18,6 +18,18 @@ Stage all changes, review them, and propose a conventional commit message. You d
 7. If the user confirms, run `git commit -m "<message>"` with a `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>` trailer
 8. After committing, ask: push to remote? (push / skip)
 
+## Single-Letter Commands
+
+Accept the first letter as a shorthand for any response prompt:
+
+| Prompt | Full word | Shorthand |
+|--------|-----------|-----------|
+| Proceed? | `commit` | `c` |
+| Proceed? | `edit` | `e` |
+| Proceed? | `cancel` | `x` |
+| Push? | `push` | `p` |
+| Push? | `skip` | `s` |
+
 ## Conventional Commit Types
 
 | Type | Use for |
@@ -41,7 +53,7 @@ Staged changes: [brief summary of what's changed]
 Suggested commit message:
   feat(auth): add JWT refresh token support
 
-Proceed? (commit / edit / cancel)
+Proceed? (c)ommit / (e)dit / (x) cancel
 ```
 
 After committing:
@@ -49,11 +61,12 @@ After committing:
 ```
 Committed: feat(auth): add JWT refresh token support
 
-Push to remote? (push / skip)
+Push to remote? (p)ush / (s)kip
 ```
 
 ## Rules
 
+- Never use `cd` before git commands — the working directory is already set; run `git status`, `git add`, etc. directly
 - Always stage with `git add -A` before reviewing — never skip this step
 - If there is nothing to stage (clean working tree), say so and stop
 - If staged changes span multiple concerns, flag it and suggest splitting
