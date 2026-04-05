@@ -2,6 +2,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+> **Note:** This project uses [Biome](https://biomejs.dev) for linting and formatting instead of ESLint + Prettier. Biome handles both in a single tool with one config file (`biome.json`), requiring significantly less configuration than ESLint + Prettier which need separate configs and additional plugins to avoid conflicts with each other.
+
 First, run the development server:
 
 ```bash
