@@ -1,5 +1,4 @@
 {
-  "files.eol": "\n",
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "biomejs.biome",
   "editor.codeActionsOnSave": {
