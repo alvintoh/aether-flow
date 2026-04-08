@@ -40,7 +40,15 @@
         "organizeImports": {
           "level": "on",
           "options": {
-            "identifierOrder": "natural"
+            "identifierOrder": "lexicographic",
+            "groups": [
+              ":URL:",
+              ":NODE:",
+              ":PACKAGE_WITH_PROTOCOL:",
+              ":ALIAS:",
+              ":PACKAGE:",
+              ":PATH:"
+            ]
           }
         }
       }
