@@ -22,7 +22,6 @@ export const LogoutButton = () => {
           },
         });
       }}
-      variant="outline"
     >
       Logout
     </Button>
