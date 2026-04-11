@@ -77,7 +77,9 @@ export function RegisterForm() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle>Get Started</CardTitle>
+          <CardTitle asChild>
+            <h1>Get Started</h1>
+          </CardTitle>
           <CardDescription>Create your account to get started</CardDescription>
         </CardHeader>
         <CardContent>
@@ -87,20 +89,44 @@ export function RegisterForm() {
                 <div className="flex flex-col gap-4">
                   <Button
                     variant="outline"
+                    size="lg"
                     className="w-full"
                     type="button"
                     disabled={isPending}
                   >
+                    <Image
+                      src="/logos/github.svg"
+                      alt="GitHub"
+                      className="mr-2"
+                      width={20}
+                      height={20}
+                    />
                     Continue with GitHub
                   </Button>
                   <Button
                     variant="outline"
+                    size="lg"
                     className="w-full"
                     type="button"
                     disabled={isPending}
                   >
+                    <Image
+                      src="/logos/google.svg"
+                      alt="Google"
+                      className="mr-2"
+                      width={20}
+                      height={20}
+                    />
                     Continue with Google
                   </Button>
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">or</span>
+                  </div>
                 </div>
                 <div className="grid gap-6">
                   <FormField
@@ -112,7 +138,8 @@ export function RegisterForm() {
                         <FormControl>
                           <Input
                             type="email"
-                            placeholder="m@example.com"
+                            placeholder="you@example.com"
+                            className="h-10 md:h-8"
                             {...field}
                           />
                         </FormControl>
@@ -129,7 +156,8 @@ export function RegisterForm() {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder="*********"
+                            placeholder="Enter your password"
+                            className="h-10 md:h-8"
                             {...field}
                           />
                         </FormControl>
@@ -146,7 +174,8 @@ export function RegisterForm() {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder="*********"
+                            placeholder="Confirm your password"
+                            className="h-10 md:h-8"
                             {...field}
                           />
                         </FormControl>
@@ -154,7 +183,7 @@ export function RegisterForm() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full" disabled={isPending}>
+                  <Button type="submit" size="lg" className="w-full" disabled={isPending}>
                     Sign Up
                   </Button>
                 </div>
