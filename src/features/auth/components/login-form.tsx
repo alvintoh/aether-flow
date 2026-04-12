@@ -116,7 +116,9 @@ export function LoginForm() {
                     <span className="w-full border-t" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">or</span>
+                    <span className="bg-card px-2 text-muted-foreground">
+                      or
+                    </span>
                   </div>
                 </div>
                 <div className="grid gap-6">
@@ -130,7 +132,7 @@ export function LoginForm() {
                           <Input
                             type="email"
                             placeholder="you@example.com"
-                            className="h-10 md:h-8"
+                            className="h-10 md:h-8 text-md"
                             {...field}
                           />
                         </FormControl>
@@ -148,7 +150,7 @@ export function LoginForm() {
                           <Input
                             type="password"
                             placeholder="Enter your password"
-                            className="h-10 md:h-8"
+                            className="h-10 md:h-8 text-md"
                             {...field}
                           />
                         </FormControl>
@@ -156,7 +158,12 @@ export function LoginForm() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" size="lg" className="w-full" disabled={isPending}>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full"
+                    disabled={isPending}
+                  >
                     Login
                   </Button>
                 </div>

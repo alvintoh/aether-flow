@@ -4,7 +4,16 @@ export const appRouter = createTRPCRouter({
   getWorkflows: protectedProcedure.query(() => {
     return prisma.workflow.findMany({});
   }),
-  createWorkflow: protectedProcedure.mutation(() => {
+  createWorkflow: protectedProcedure.mutation(async () => {
+    // Fetch the video
+    await new Promise((resolve) => setTimeout(resolve, 5_000));
+
+    // Transcribe the video
+    await new Promise((resolve) => setTimeout(resolve, 5_000));
+
+    // Send the transcription to OpenAI
+    await new Promise((resolve) => setTimeout(resolve, 5_000));
+
     return prisma.workflow.create({
       data: {
         name: "test-workflow",
