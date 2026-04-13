@@ -1,15 +1,25 @@
 // src/inngest/functions.ts
+import prisma from "@/lib/db";
 import { inngest } from "./client";
 
-export const processTask = inngest.createFunction(
-  { id: "process-task", triggers: { event: "app/task.created" } },
+export const helloWorld = inngest.createFunction(
+  { id: "hello-world", triggers: { event: "test/hello.world" } },
   async ({ event, step }) => {
-    const result = await step.run("handle-task", async () => {
-      return { processed: true, id: event.data.id };
+    // Fetching the video
+    await step.sleep("wait-a-moment", "5s");
+
+    // Transcribing
+    await step.sleep("transcribing", "5s");
+
+    // Sending transcription to AI
+    await step.sleep("sending-to-ai", "5s");
+
+    await step.run("create-workflow", () => {
+      return prisma.workflow.create({
+        data: {
+          name: "workflow-from-inngest",
+        },
+      });
     });
-
-    await step.sleep("pause", "1s");
-
-    return { message: `Task ${event.data.id} complete`, result };
   },
 );
