@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "nextjs", "typescript", "import", "unicorn"],
+  "ignorePatterns": ["src/generated/**"],
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-console": "warn",
+    "no-debugger": "error",
+    "import/no-duplicates": "error",
+    "typescript/no-explicit-any": "warn",
+    "react/self-closing-comp": "error",
+    "react/jsx-no-useless-fragment": "warn",
+    "nextjs/no-img-element": "error",
+    "nextjs/no-html-link-for-pages": "error"
+  }
+}

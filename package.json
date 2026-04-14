@@ -6,8 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check",
-    "format": "biome format --write",
+    "lint": "oxlint src/",
+    "lint:fix": "oxlint --fix src/",
+    "format": "oxfmt src/",
+    "format:check": "oxfmt --check src/",
     "inngest:dev": "inngest-cli dev",
     "dev:all": "echo '' > mprocs.log && mprocs"
   },
@@ -54,7 +56,6 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
@@ -63,6 +64,8 @@
     "babel-plugin-react-compiler": "1.0.0",
     "inngest-cli": "^1.17.9",
     "mprocs": "^0.9.2",
+    "oxfmt": "^0.45.0",
+    "oxlint": "^1.60.0",
     "prisma": "^7.7.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
