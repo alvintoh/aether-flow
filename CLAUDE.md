@@ -8,8 +8,10 @@ Read `node_modules/next/dist/docs/` before writing any Next.js-specific code. He
 ```bash
 bun dev          # start dev server
 bun build        # production build
-bun lint         # biome check
-bun format       # biome format --write
+bun lint         # oxlint src/
+bun lint:fix     # oxlint --fix src/
+bun format       # oxfmt (format all files)
+bun format:check # oxfmt --check
 bun --bun run prisma [cmd]   # run prisma CLI (must use --bun flag)
 ```
 
@@ -17,7 +19,7 @@ bun --bun run prisma [cmd]   # run prisma CLI (must use --bun flag)
 
 - **Next.js 16** + React 19 + TypeScript (strict)
 - **Bun** as package manager and runtime
-- **Biome** for lint + format (not ESLint/Prettier)
+- **oxlint** for linting + **oxfmt** for formatting (not ESLint/Prettier/Biome)
 - **Tailwind CSS 4**
 - **shadcn/ui** (`radix-nova` style, components in `src/components/ui/`)
 - **Prisma 7** with PostgreSQL via `@prisma/adapter-pg`
@@ -26,42 +28,43 @@ bun --bun run prisma [cmd]   # run prisma CLI (must use --bun flag)
 
 ## Key Paths
 
-| Path | Purpose |
-|------|---------|
-| `src/app/` | Next.js App Router pages |
-| `src/components/ui/` | shadcn UI components |
-| `src/lib/db.ts` | Prisma client singleton |
+| Path                    | Purpose                               |
+| ----------------------- | ------------------------------------- |
+| `src/app/`              | Next.js App Router pages              |
+| `src/components/ui/`    | shadcn UI components                  |
+| `src/lib/db.ts`         | Prisma client singleton               |
 | `src/generated/prisma/` | Generated Prisma client (do not edit) |
-| `prisma/schema.prisma` | Database schema |
-| `@/*` | Path alias for `src/*` |
+| `prisma/schema.prisma`  | Database schema                       |
+| `@/*`                   | Path alias for `src/*`                |
 
 ## Gotchas
 
 - **Prisma client** is generated to `src/generated/prisma/`, NOT `@prisma/client` — import from `../generated/prisma/client`
 - **Prisma CLI** must be run as `bun --bun run prisma [cmd]` (not `npx prisma`)
 - **DATABASE_URL** env var required for Prisma
-- **Biome** handles both linting and formatting — do not add ESLint or Prettier config
+- **oxlint** handles linting, **oxfmt** handles formatting — do not add ESLint, Prettier, or Biome config
 
 ## Project Agents (`.claude/agents/`)
 
-| Agent | Purpose |
-|-------|---------|
-| `architecture` | Map and improve repo architecture, module boundaries, data flow |
-| `backend` | Review Route Handlers, Server Actions, DB, auth, caching, security |
-| `design` | Review UI layouts — spacing, typography, colour, accessibility |
-| `devops` | Review CI/CD, Vercel deployment, env vars, security headers |
-| `docs` | Assemble/maintain README.md, changelogs, keep docs in sync |
-| `enhancement` | Plan roadmap, prioritise features, effort estimation |
-| `frontend` | Review React, Next.js App Router, TypeScript, performance, a11y |
-| `spec` | Define/review data contracts, TypeScript schemas, API specs |
+| Agent          | Purpose                                                            |
+| -------------- | ------------------------------------------------------------------ |
+| `architecture` | Map and improve repo architecture, module boundaries, data flow    |
+| `backend`      | Review Route Handlers, Server Actions, DB, auth, caching, security |
+| `design`       | Review UI layouts — spacing, typography, colour, accessibility     |
+| `devops`       | Review CI/CD, Vercel deployment, env vars, security headers        |
+| `docs`         | Assemble/maintain README.md, changelogs, keep docs in sync         |
+| `enhancement`  | Plan roadmap, prioritise features, effort estimation               |
+| `frontend`     | Review React, Next.js App Router, TypeScript, performance, a11y    |
+| `spec`         | Define/review data contracts, TypeScript schemas, API specs        |
 
 ## Project Skills (`.claude/skills/`)
 
-| Skill | Trigger |
-|-------|---------|
-| `/commit-review` | Stage all changes, review, suggest commit message |
-| `/fe-review` | Full frontend review — lint, typecheck, best practices |
-| `/design-review` | UI/UX review of all components in `src/components/` |
-| `/arch-diagram` | Generate Excalidraw architecture diagrams → `docs/diagrams/` |
-| `/build-readme` | Orchestrate all agents to assemble a complete README.md |
-
+| Skill            | Trigger                                                      |
+| ---------------- | ------------------------------------------------------------ |
+| `/arch-replace` | Evaluate replacing a tool/lib before migrating — Go / No-Go verdict |
+| `/arch-add`     | Evaluate adding a new lib to the stack — feasibility and fit assessment |
+| `/commit-review` | Stage all changes, review, suggest commit message            |
+| `/fe-review`     | Full frontend review — lint, typecheck, best practices       |
+| `/design-review` | UI/UX review of all components in `src/components/`          |
+| `/arch-diagram`  | Generate Excalidraw architecture diagrams → `docs/diagrams/` |
+| `/docs-assemble` | Orchestrate all agents to assemble a complete README.md      |
