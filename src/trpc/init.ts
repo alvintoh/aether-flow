@@ -1,6 +1,7 @@
-import { auth } from "@/lib/auth";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { headers } from "next/headers";
+
+import { auth } from "@/lib/auth";
 /**
  * This context creator accepts `headers` so it can be reused in both
  * the RSC server caller (where you pass `next/headers`) and the
