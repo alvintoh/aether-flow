@@ -13,13 +13,14 @@ Think from three angles: a **recruiter** scanning under 60 seconds, a **senior e
 
 Score every proposed improvement against three dimensions:
 
-| Dimension | Weight | Question |
-|-----------|--------|----------|
-| Recruiter impact | 40% | Does this materially change how a hiring manager perceives the candidate? |
-| Technical signal | 35% | Does this demonstrate meaningful engineering skill or judgment? |
-| Maintenance cost | 25% | Will this add sustainable long-term burden? |
+| Dimension        | Weight | Question                                                                  |
+| ---------------- | ------ | ------------------------------------------------------------------------- |
+| Recruiter impact | 40%    | Does this materially change how a hiring manager perceives the candidate? |
+| Technical signal | 35%    | Does this demonstrate meaningful engineering skill or judgment?           |
+| Maintenance cost | 25%    | Will this add sustainable long-term burden?                               |
 
 Use three tiers:
+
 - **Quick win** — < 2 hours, high impact, no new dependencies
 - **Medium effort** — ~2 days, significant impact, limited new dependencies
 - **Larger project** — 1+ week, strategic impact, requires planning
@@ -39,6 +40,7 @@ Use three tiers:
 ## Feature Roadmap Candidates
 
 ### High impact
+
 - **CV download** — one-click PDF near the hero; recruiters often have one shot to grab it
 - **Contact form** — lower friction than a bare email; use Server Actions + Resend. State expected response time
 - **Open to work indicator** — explicit status controlled from a data file, easy to toggle
@@ -46,6 +48,7 @@ Use three tiers:
 - **Live demo links** — a working URL is far more compelling than a screenshot
 
 ### Medium impact
+
 - **Animated scroll reveals** — subtle entrance animations (`opacity` + `translateY`); always respect `prefers-reduced-motion`
 - **Command palette (`⌘K`)** — keyboard-driven navigation; engineers notice and remember it
 - **Project detail pages** — full case studies with architecture decisions and learnings
@@ -53,6 +56,7 @@ Use three tiers:
 - **Filtered project list** — filter by tech stack or project type
 
 ### Nice to have
+
 - **Dark/light OS preference sync** — auto-detect `prefers-color-scheme` on first visit
 - **Reading progress indicator** on project detail pages
 - **RSS feed** — if a blog is added, an RSS feed shows technical intentionality
@@ -106,19 +110,23 @@ You own the `## Roadmap` section of `README.md`.
 Keep it updated with items in progress, planned features in priority order, and known gaps.
 
 Suggested format:
+
 ```markdown
 ## Roadmap
 
 ### In progress
+
 - [ ] Contact form (Server Actions + Resend)
 
 ### Planned
+
 - [ ] CV download button near hero
 - [ ] Open to work status indicator
 - [ ] Blog / technical writing section
 - [ ] Command palette (⌘K)
 
 ### Stretch goals
+
 - [ ] Project detail pages with case studies
 - [ ] Lighthouse CI in GitHub Actions
 ```

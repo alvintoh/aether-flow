@@ -38,7 +38,7 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun lint
       - run: bun typecheck
-      - run: bun build   # catch build-time errors early
+      - run: bun build # catch build-time errors early
 ```
 
 - Run `--frozen-lockfile` (bun) or `--ci` (npm) to prevent silent dependency drift
@@ -75,11 +75,14 @@ Set via `next.config.ts` or `vercel.json`:
 ```ts
 // next.config.ts
 const securityHeaders = [
-  { key: 'X-Frame-Options', value: 'DENY' },
-  { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-]
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=()",
+  },
+];
 ```
 
 - Content Security Policy: start with `default-src 'self'`, add exceptions as needed
@@ -97,8 +100,8 @@ const securityHeaders = [
 ```yaml
 - uses: treosh/lighthouse-ci-action@v10
   with:
-    urls: 'https://preview-url.vercel.app'
-    budgetPath: '.lighthouserc.json'
+    urls: "https://preview-url.vercel.app"
+    budgetPath: ".lighthouserc.json"
     uploadArtifacts: true
 ```
 
@@ -140,6 +143,7 @@ You own the `## Deployment & CI/CD` section of `README.md`.
 Keep it updated with the deploy badge, environment variable table, and a summary of CI checks.
 
 Suggested format:
+
 ```markdown
 ## Deployment & CI/CD
 
@@ -148,12 +152,14 @@ Deployed on [Vercel](https://vercel.com). Merging to `main` triggers a productio
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=...)
 
 ### CI checks (GitHub Actions)
+
 Every PR runs: **lint** → **typecheck** → **build**
 
 ### Environment variables
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_SITE_URL` | No | Canonical URL for SEO metadata |
+
+| Variable               | Required | Description                    |
+| ---------------------- | -------- | ------------------------------ |
+| `NEXT_PUBLIC_SITE_URL` | No       | Canonical URL for SEO metadata |
 ```
 
 ---

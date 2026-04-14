@@ -19,8 +19,8 @@ Review the code and suggest improvements — do NOT rewrite unless a change is s
 - Prefer typed custom error classes over throwing generic `Error` objects
 
 ```ts
-const schema = z.object({ email: z.string().email(), name: z.string().min(1) })
-type CreateUserInput = z.infer<typeof schema>
+const schema = z.object({ email: z.string().email(), name: z.string().min(1) });
+type CreateUserInput = z.infer<typeof schema>;
 ```
 
 ---
@@ -50,7 +50,9 @@ type CreateUserInput = z.infer<typeof schema>
 
 ```ts
 // batch related data in one query, never loop with separate queries
-const posts = await db.post.findMany({ include: { author: { select: { name: true } } } })
+const posts = await db.post.findMany({
+  include: { author: { select: { name: true } } },
+});
 ```
 
 ---
@@ -102,10 +104,12 @@ const posts = await db.post.findMany({ include: { author: { select: { name: true
 
 ```ts
 // src/env.ts
-export const env = z.object({
-  DATABASE_URL: z.string().url(),
-  NEXTAUTH_SECRET: z.string().min(32),
-}).parse(process.env)
+export const env = z
+  .object({
+    DATABASE_URL: z.string().url(),
+    NEXTAUTH_SECRET: z.string().min(32),
+  })
+  .parse(process.env);
 ```
 
 ---
@@ -180,19 +184,21 @@ export const env = z.object({
 You own the `## Environment Variables` section of `README.md`. Keep it in sync with `.env.example` — they must always agree.
 
 Suggested format:
+
 ```markdown
 ## Environment Variables
 
 No environment variables required for local development.
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_SITE_URL` | No | Canonical URL for SEO metadata (`https://yourname.dev`) |
+| Variable               | Required | Description                                             |
+| ---------------------- | -------- | ------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL` | No       | Canonical URL for SEO metadata (`https://yourname.dev`) |
 ```
 
 ---
 
 ## Return format
+
 1. Numbered list of improvements, most impactful first
 2. Short explanation for each
 3. Code snippet only if it makes the idea significantly clearer

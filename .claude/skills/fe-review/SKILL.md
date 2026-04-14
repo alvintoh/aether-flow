@@ -17,6 +17,7 @@ bun typecheck
 ## Step 2 — Discover and read all component files
 
 Use Glob to discover files rather than relying on a fixed list:
+
 - Pattern `src/components/**/*.tsx` — all components
 - Pattern `src/app/page.tsx` and `src/app/layout.tsx` — app entry points
 - Pattern `src/data/*.ts` — all data files
@@ -26,6 +27,7 @@ Read every file returned by these globs.
 ## Step 3 — Review against these criteria
 
 **TypeScript**
+
 - Prefer `type` over `interface` unless declaration merging is needed
 - Avoid `any` — use `unknown`, generics, or narrowed types
 - Type component props explicitly — never rely on inferred JSX prop types
@@ -33,6 +35,7 @@ Read every file returned by these globs.
 - Avoid type assertions (`as Foo`)
 
 **React & Hooks**
+
 - Keep components single-responsibility
 - Avoid index keys in lists — use stable, unique IDs
 - Never create objects/arrays/functions inline in JSX props
@@ -40,6 +43,7 @@ Read every file returned by these globs.
 - Avoid `useEffect` for derived state — compute during render
 
 **Next.js App Router**
+
 - Default to Server Components — `"use client"` only for event handlers, browser APIs, or hooks
 - Push `"use client"` as far down the tree as possible
 - Use `generateMetadata` for SEO — never hardcode `<title>` in JSX
@@ -47,12 +51,14 @@ Read every file returned by these globs.
 - Use `next/font` — never load fonts via a `<link>` tag
 
 **Performance & Bundle**
+
 - Each `"use client"` boundary increases the JS bundle — flag unnecessary ones
 - Avoid barrel files (`index.ts` re-exports) — they prevent tree-shaking
 - Import only what you need — never import entire icon sets
 - Prefer CSS transitions over JS-driven animations for simple effects
 
 **Accessibility**
+
 - Use semantic HTML (`<nav>`, `<main>`, `<section>`, `<button>`) — never `<div>` for interactive elements
 - All interactive elements must be keyboard-navigable with visible focus styles
 - Every `<img>` needs a descriptive `alt`; use `alt=""` only for decorative images
@@ -60,6 +66,7 @@ Read every file returned by these globs.
 - Colour contrast: 4.5:1 for normal text, 3:1 for large text (WCAG AA)
 
 **Security**
+
 - Never use `dangerouslySetInnerHTML` with user content
 - Never put secrets in `NEXT_PUBLIC_` env vars
 - Validate URLs in `href` props to prevent `javascript:` injection
@@ -67,6 +74,7 @@ Read every file returned by these globs.
 ## Step 4 — Return findings
 
 Return a **numbered list of improvements, most impactful first**. For each finding:
+
 - Short explanation of the issue
 - Which file and line it appears in
 - Code snippet only if it makes the fix significantly clearer

@@ -103,6 +103,7 @@ Instead, pair every rectangle with one or more separate `text` elements position
 ```
 
 Rules for text positioning:
+
 - Title text: `y = rect.y + 10`, `x = rect.x`, `width = rect.width`, `textAlign: "center"`
 - Body text: `y = title.y + title.height + 6`, same x/width, `textAlign: "center"`
 - Leave at least 10px padding on all sides inside the rectangle
@@ -174,6 +175,7 @@ After rendering each diagram inline with the Excalidraw tool,
 save the element JSON for all diagrams that were generated or updated.
 
 Write to `docs/diagrams/`:
+
 - `structure.excalidraw` (if structure was generated)
 - `dataflow.excalidraw` (if dataflow was generated)
 - `architecture.excalidraw` (if architecture was generated)
@@ -188,64 +190,100 @@ Write `docs/diagrams/_gen-svg.mjs` with the following content, setting `DIAGRAMS
 include the diagrams that were actually regenerated:
 
 ```js
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from "fs";
 
 const DIAGRAMS = [
-  { input: 'docs/diagrams/structure.excalidraw',    output: 'docs/diagrams/structure.svg' },
-  { input: 'docs/diagrams/dataflow.excalidraw',     output: 'docs/diagrams/dataflow.svg' },
-  { input: 'docs/diagrams/architecture.excalidraw', output: 'docs/diagrams/architecture.svg' },
+  {
+    input: "docs/diagrams/structure.excalidraw",
+    output: "docs/diagrams/structure.svg",
+  },
+  {
+    input: "docs/diagrams/dataflow.excalidraw",
+    output: "docs/diagrams/dataflow.svg",
+  },
+  {
+    input: "docs/diagrams/architecture.excalidraw",
+    output: "docs/diagrams/architecture.svg",
+  },
 ];
 
 function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function toSvg(path) {
-  const data = JSON.parse(readFileSync(path, 'utf-8'));
-  const els  = data.elements.filter(e => e.type !== 'cameraUpdate');
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  const data = JSON.parse(readFileSync(path, "utf-8"));
+  const els = data.elements.filter((e) => e.type !== "cameraUpdate");
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity;
   for (const el of els) {
     if (el.x == null) continue;
-    minX = Math.min(minX, el.x); minY = Math.min(minY, el.y);
+    minX = Math.min(minX, el.x);
+    minY = Math.min(minY, el.y);
     maxX = Math.max(maxX, el.x + (el.width ?? 0));
     maxY = Math.max(maxY, el.y + (el.height ?? 0));
-    if (el.type === 'arrow' && el.points)
-      for (const [px,py] of el.points) { maxX = Math.max(maxX, el.x+px); maxY = Math.max(maxY, el.y+py); }
+    if (el.type === "arrow" && el.points)
+      for (const [px, py] of el.points) {
+        maxX = Math.max(maxX, el.x + px);
+        maxY = Math.max(maxY, el.y + py);
+      }
   }
-  const pad = 28, W = Math.ceil(maxX-minX+2*pad), H = Math.ceil(maxY-minY+2*pad);
-  const ox = -minX+pad, oy = -minY+pad, f = n => +n.toFixed(2);
-  const rects  = els.filter(e=>e.type==='rectangle').sort((a,b)=>(b.width*b.height)-(a.width*a.height));
-  const texts  = els.filter(e=>e.type==='text');
-  const arrows = els.filter(e=>e.type==='arrow');
+  const pad = 28,
+    W = Math.ceil(maxX - minX + 2 * pad),
+    H = Math.ceil(maxY - minY + 2 * pad);
+  const ox = -minX + pad,
+    oy = -minY + pad,
+    f = (n) => +n.toFixed(2);
+  const rects = els
+    .filter((e) => e.type === "rectangle")
+    .sort((a, b) => b.width * b.height - a.width * a.height);
+  const texts = els.filter((e) => e.type === "text");
+  const arrows = els.filter((e) => e.type === "arrow");
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">\n`;
   svg += `<defs><marker id="ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#555"/></marker></defs>\n`;
   svg += `<rect width="${W}" height="${H}" fill="#ffffff"/>\n`;
   for (const el of rects) {
-    const op = f((el.opacity??100)/100);
-    svg += `<rect x="${f(el.x+ox)}" y="${f(el.y+oy)}" width="${el.width}" height="${el.height}" rx="${el.roundness?8:0}" fill="${el.backgroundColor??'none'}" fill-opacity="${op}" stroke="${el.strokeColor??'#333'}" stroke-width="1.5"/>\n`;
+    const op = f((el.opacity ?? 100) / 100);
+    svg += `<rect x="${f(el.x + ox)}" y="${f(el.y + oy)}" width="${el.width}" height="${el.height}" rx="${el.roundness ? 8 : 0}" fill="${el.backgroundColor ?? "none"}" fill-opacity="${op}" stroke="${el.strokeColor ?? "#333"}" stroke-width="1.5"/>\n`;
   }
   for (const el of texts) {
-    const lines=el.text.split('\n'), fs=el.fontSize??14, lh=f(fs*1.45);
-    const cx=f(el.x+ox+(el.width??0)/2), startY=f(el.y+oy+fs);
-    svg += `<text text-anchor="middle" fill="${el.strokeColor??'#333'}" font-size="${fs}" font-family="system-ui,sans-serif">\n`;
-    for (let i=0;i<lines.length;i++) {
-      const line=lines[i].trim()||'\u00a0';
-      svg += i===0 ? `  <tspan x="${cx}" y="${startY}">${esc(line)}</tspan>\n`
-                   : `  <tspan x="${cx}" dy="${lh}">${esc(line)}</tspan>\n`;
+    const lines = el.text.split("\n"),
+      fs = el.fontSize ?? 14,
+      lh = f(fs * 1.45);
+    const cx = f(el.x + ox + (el.width ?? 0) / 2),
+      startY = f(el.y + oy + fs);
+    svg += `<text text-anchor="middle" fill="${el.strokeColor ?? "#333"}" font-size="${fs}" font-family="system-ui,sans-serif">\n`;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim() || "\u00a0";
+      svg +=
+        i === 0
+          ? `  <tspan x="${cx}" y="${startY}">${esc(line)}</tspan>\n`
+          : `  <tspan x="${cx}" dy="${lh}">${esc(line)}</tspan>\n`;
     }
     svg += `</text>\n`;
   }
   for (const el of arrows) {
-    if (!el.points||el.points.length<2) continue;
-    const pts=el.points.map(([px,py])=>`${f(el.x+ox+px)},${f(el.y+oy+py)}`).join(' ');
-    svg += `<polyline points="${pts}" fill="none" stroke="${el.strokeColor??'#555'}" stroke-width="${el.strokeWidth??2}" marker-end="url(#ah)"/>\n`;
+    if (!el.points || el.points.length < 2) continue;
+    const pts = el.points
+      .map(([px, py]) => `${f(el.x + ox + px)},${f(el.y + oy + py)}`)
+      .join(" ");
+    svg += `<polyline points="${pts}" fill="none" stroke="${el.strokeColor ?? "#555"}" stroke-width="${el.strokeWidth ?? 2}" marker-end="url(#ah)"/>\n`;
   }
   return svg + `</svg>`;
 }
 
-for (const {input,output} of DIAGRAMS) {
-  if (!existsSync(input)) { console.log(`Skip: ${input}`); continue; }
-  writeFileSync(output, toSvg(input), 'utf-8');
+for (const { input, output } of DIAGRAMS) {
+  if (!existsSync(input)) {
+    console.log(`Skip: ${input}`);
+    continue;
+  }
+  writeFileSync(output, toSvg(input), "utf-8");
   console.log(`✓ ${output}`);
 }
 ```
@@ -267,12 +305,15 @@ Find the existing `## Architecture` section in `README.md` (or append it before 
 ## Architecture
 
 ### Folder Structure
+
 ![Folder Structure](docs/diagrams/structure.svg)
 
 ### Data Flow
+
 ![Data Flow](docs/diagrams/dataflow.svg)
 
 ### System Architecture
+
 ![System Architecture](docs/diagrams/architecture.svg)
 ```
 

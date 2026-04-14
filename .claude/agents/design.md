@@ -74,6 +74,7 @@ Review the design and suggest improvements — do NOT rewrite unless a change is
 ## States & Feedback
 
 Every interactive element needs all five states:
+
 - **Default** — resting
 - **Hover** — subtle change confirming interactivity (`transition-colors duration-150`)
 - **Focus** — visible ring for keyboard users; never remove without replacing
@@ -81,6 +82,7 @@ Every interactive element needs all five states:
 - **Disabled** — reduced opacity, `cursor-not-allowed`, no hover effect
 
 Every data surface needs three states:
+
 - **Loading** — skeleton matching the shape of the content (not a generic grey box); use `animate-pulse`
 - **Empty** — explain why it's empty, provide a call to action, include an icon or illustration
 - **Error** — human-readable message with a recovery action (retry, go back)
@@ -153,22 +155,24 @@ Use a spinner only for actions (form submit, file upload) — use skeletons for 
 You own the `## Design System` section of `README.md`. Keep it in sync with `src/app/globals.css` — if tokens change, update this section.
 
 Suggested format:
+
 ```markdown
 ## Design System
 
 Theme tokens in `src/app/globals.css` as CSS custom properties. Tailwind accesses them via `@theme inline`.
 
-| Token | Dark | Light |
-|-------|------|-------|
+| Token          | Dark      | Light     |
+| -------------- | --------- | --------- |
 | `--background` | `#1e1e2e` | `#f8fafc` |
 | `--foreground` | `#a6adc8` | `#3f4b5c` |
-| `--accent` | `#54d8b9` | `#0f766e` |
-| `--surface` | `#313244` | `#e2e8f0` |
+| `--accent`     | `#54d8b9` | `#0f766e` |
+| `--surface`    | `#313244` | `#e2e8f0` |
 ```
 
 ---
 
 ## Return format
+
 1. Numbered list of improvements, most impactful first
 2. Short explanation for each
 3. Tailwind snippet only if it makes the idea significantly clearer

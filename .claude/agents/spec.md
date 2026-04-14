@@ -21,9 +21,9 @@ Review or design contracts — schemas, API specs, event types, and prop interfa
 ```ts
 // Good — discriminated union prevents invalid combinations
 type SocialLink =
-  | { platform: 'github'; handle: string; url: string }
-  | { platform: 'linkedin'; profileId: string; url: string }
-  | { platform: 'email'; address: string; url: string }
+  | { platform: "github"; handle: string; url: string }
+  | { platform: "linkedin"; profileId: string; url: string }
+  | { platform: "email"; address: string; url: string };
 ```
 
 ---
@@ -60,13 +60,16 @@ type SocialLink =
 
 ```ts
 export const projectSchema = z.object({
-  title: z.string().min(1).describe('Display name of the project'),
-  websiteUrl: z.string().url().describe('Live URL, required for portfolio display'),
-  stack: z.array(z.string()).min(1).describe('Tech stack, shown as badges'),
+  title: z.string().min(1).describe("Display name of the project"),
+  websiteUrl: z
+    .string()
+    .url()
+    .describe("Live URL, required for portfolio display"),
+  stack: z.array(z.string()).min(1).describe("Tech stack, shown as badges"),
   stars: z.number().int().nonneg().optional(),
   forks: z.number().int().nonneg().optional(),
-})
-export type Project = z.infer<typeof projectSchema>
+});
+export type Project = z.infer<typeof projectSchema>;
 ```
 
 ---
@@ -107,18 +110,19 @@ You own the `## Data Contracts & Schemas` section of `README.md`.
 Keep it updated with a table of the key data types in `src/data/` and any schema conventions in use.
 
 Suggested format:
+
 ```markdown
 ## Data Contracts & Schemas
 
 All content is typed in `src/data/`. No runtime fetching — schemas are compile-time only.
 
-| File | Type | Description |
-|------|------|-------------|
-| `hero-data.ts` | `HeroData` | Name, title, bio, avatar path |
-| `experience-data.ts` | `Experience[]` | Work history cards |
-| `project-data.ts` | `Project[]` | Portfolio project cards |
-| `social-links-data.ts` | `SocialLink[]` | Footer and sidebar links |
-| `about-data.ts` | `AboutData` | Skills, interests, about copy |
+| File                   | Type           | Description                   |
+| ---------------------- | -------------- | ----------------------------- |
+| `hero-data.ts`         | `HeroData`     | Name, title, bio, avatar path |
+| `experience-data.ts`   | `Experience[]` | Work history cards            |
+| `project-data.ts`      | `Project[]`    | Portfolio project cards       |
+| `social-links-data.ts` | `SocialLink[]` | Footer and sidebar links      |
+| `about-data.ts`        | `AboutData`    | Skills, interests, about copy |
 ```
 
 ---
