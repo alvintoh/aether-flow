@@ -1,25 +1,48 @@
-// src/inngest/functions.ts
-import prisma from "@/lib/db";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createOpenAI } from "@ai-sdk/openai";
+import { generateText } from "ai";
 import { inngest } from "./client";
 
-export const helloWorld = inngest.createFunction(
-  { id: "hello-world", triggers: { event: "test/hello.world" } },
-  async ({ event, step }) => {
-    // Fetching the video
-    await step.sleep("wait-a-moment", "5s");
+const google = createGoogleGenerativeAI();
+const openai = createOpenAI();
+const anthropic = createAnthropic();
 
-    // Transcribing
-    await step.sleep("transcribing", "5s");
+export const execute = inngest.createFunction(
+  { id: "execute", triggers: { event: "execute/ai" } },
+  async ({ step }) => {
+    const geminiModel = process.env.GOOGLE_MODEL;
+    const openAIModel = process.env.OPENAI_MODEL;
+    const anthropicModel = process.env.ANTHROPIC_MODEL;
 
-    // Sending transcription to AI
-    await step.sleep("sending-to-ai", "5s");
+    const geminiSteps = geminiModel
+      ? await step.ai.wrap("gemini-generate-text", generateText, {
+          model: google(geminiModel),
+          system: "You are a helpful assistant.",
+          prompt: "What is 2 + 2?",
+        })
+      : undefined;
 
-    await step.run("create-workflow", () => {
-      return prisma.workflow.create({
-        data: {
-          name: "workflow-from-inngest",
-        },
-      });
-    });
+    const openaiSteps = openAIModel
+      ? await step.ai.wrap("openai-generate-text", generateText, {
+          model: openai(openAIModel),
+          system: "You are a helpful assistant.",
+          prompt: "What is 2 + 2?",
+        })
+      : undefined;
+
+    const anthropicSteps = anthropicModel
+      ? await step.ai.wrap("anthropic-generate-text", generateText, {
+          model: anthropic(anthropicModel),
+          system: "You are a helpful assistant.",
+          prompt: "What is 2 + 2?",
+        })
+      : undefined;
+
+    return {
+      geminiSteps,
+      openaiSteps,
+      anthropicSteps,
+    };
   },
 );

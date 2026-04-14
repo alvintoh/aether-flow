@@ -8,10 +8,15 @@ import { LogoutButton } from "./logout";
 
 const Page = () => {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
   const { data } = useQuery(trpc.getWorkflows.queryOptions());
 
-  const testAI = useMutation(trpc.testAI.mutationOptions({}));
+  const testAI = useMutation(
+    trpc.testAI.mutationOptions({
+      onSuccess: () => {
+        toast.success("AI Job queued");
+      },
+    }),
+  );
 
   const create = useMutation(
     trpc.createWorkflow.mutationOptions({
