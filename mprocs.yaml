@@ -6,4 +6,6 @@ procs:
     cmd: ["bun", "--bun", "run", "prisma", "studio"]
 
   next:
+    env:
+      NODE_OPTIONS: "--trace-warnings"
     cmd: ["bun", "run", "dev"]

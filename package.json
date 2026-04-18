@@ -11,6 +11,7 @@
     "format": "oxfmt src/",
     "format:check": "oxfmt --check src/",
     "inngest:dev": "inngest-cli dev",
+    "dev:trace": "set NODE_OPTIONS=--trace-warnings && bun run dev",
     "dev:all": "echo '' > mprocs.log && mprocs"
   },
   "dependencies": {
