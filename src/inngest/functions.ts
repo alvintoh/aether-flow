@@ -1,6 +1,7 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
+import * as Sentry from "@sentry/node";
 import { generateText } from "ai";
 
 import { inngest } from "./client";
@@ -9,6 +10,13 @@ const google = createGoogleGenerativeAI();
 const openai = createOpenAI();
 const anthropic = createAnthropic();
 
+const sentryExperimentalTelemetry = {
+  isEnabled: true,
+  functionId: "joke_agent",
+  recordInputs: true,
+  recordOutputs: true,
+};
+
 export const execute = inngest.createFunction(
   { id: "execute", triggers: { event: "execute/ai" } },
   async ({ step }) => {
@@ -16,11 +24,16 @@ export const execute = inngest.createFunction(
     const openAIModel = process.env.OPENAI_MODEL;
     const anthropicModel = process.env.ANTHROPIC_MODEL;
 
+    Sentry.logger.info("User triggered test log", {
+      log_source: "sentry_test",
+    });
+
     const geminiSteps = geminiModel
       ? await step.ai.wrap("gemini-generate-text", generateText, {
           model: google(geminiModel),
           system: "You are a helpful assistant.",
           prompt: "What is 2 + 2?",
+          experimental_telemetry: sentryExperimentalTelemetry,
         })
       : undefined;
 
@@ -29,6 +42,7 @@ export const execute = inngest.createFunction(
           model: openai(openAIModel),
           system: "You are a helpful assistant.",
           prompt: "What is 2 + 2?",
+          experimental_telemetry: sentryExperimentalTelemetry,
         })
       : undefined;
 
@@ -37,6 +51,7 @@ export const execute = inngest.createFunction(
           model: anthropic(anthropicModel),
           system: "You are a helpful assistant.",
           prompt: "What is 2 + 2?",
+          experimental_telemetry: sentryExperimentalTelemetry,
         })
       : undefined;
 
