@@ -59,12 +59,14 @@ bun --bun run prisma [cmd]   # run prisma CLI (must use --bun flag)
 
 ## Project Skills (`.claude/skills/`)
 
-| Skill            | Trigger                                                      |
-| ---------------- | ------------------------------------------------------------ |
-| `/arch-replace` | Evaluate replacing a tool/lib before migrating — Go / No-Go verdict |
-| `/arch-add`     | Evaluate adding a new lib to the stack — feasibility and fit assessment |
-| `/commit-review` | Stage all changes, review, suggest commit message            |
-| `/fe-review`     | Full frontend review — lint, typecheck, best practices       |
-| `/design-review` | UI/UX review of all components in `src/components/`          |
-| `/arch-diagram`  | Generate Excalidraw architecture diagrams → `docs/diagrams/` |
-| `/docs-assemble` | Orchestrate all agents to assemble a complete README.md      |
+| Skill             | Description                                                             |
+| ----------------- | ----------------------------------------------------------------------- |
+| `/arch-add`       | Evaluate adding a new lib before installing — feasibility and fit       |
+| `/arch-diagram`   | Generate Excalidraw architecture diagrams → `docs/diagrams/`            |
+| `/arch-replace`   | Evaluate replacing a tool/lib before migrating — Go / No-Go verdict     |
+| `/claude-sync`    | Copy .claude/ folder to another project, with diff and confirmation     |
+| `/commit-review`  | Stage all changes, review, suggest commit message                       |
+| `/design-review`  | UI/UX review of all components in `src/components/`                     |
+| `/docs-assemble`  | Orchestrate all agents to assemble a complete README.md                 |
+| `/fe-create`      | Scaffold and build a new frontend feature following project conventions  |
+| `/fe-review`      | Full frontend review — lint, typecheck, best practices                  |

@@ -3,9 +3,10 @@ name: docs-assemble
 description: >
   Orchestrate all contributing agents to assemble a complete, best-practices README.md.
   Use when README.md needs a full refresh or first-time assembly.
-  Dispatches architect, frontend, backend, spec, devops, and enhancement agents
+  Dispatches architect, frontend, spec, design, devops, and enhancement agents
   in parallel to write each section, then assembles the final document.
   Skips agents whose watched files have not changed since the last assembly.
+  Self-adapts to any project via a relevance check on first run after a sync.
 disable-model-invocation: true
 ---
 
@@ -13,18 +14,115 @@ disable-model-invocation: true
 
 Coordinate all contributing agents to write their section, then assemble into a
 complete, accurate README.md. Skips unchanged sections to minimise token usage.
+Automatically re-derives its own config when synced to a new project.
+
+---
+
+## Step 0: Relevance check (self-adaptation)
+
+Before doing anything else, verify that this skill's hardcoded config still
+matches the current project. This catches the case where `/claude-sync` copied
+this skill from another project.
+
+Run these checks:
+
+```bash
+# 1. Get the current project name
+node -e "console.log(require('./package.json').name)" 2>/dev/null || cat package.json | grep '"name"' | head -1
+
+# 2. Check whether the key watched paths from the section map actually exist
+[ -d "src/app" ]        && echo "src/app: EXISTS"        || echo "src/app: MISSING"
+[ -d "src/components" ] && echo "src/components: EXISTS" || echo "src/components: MISSING"
+[ -d "src/data" ]       && echo "src/data: EXISTS"       || echo "src/data: MISSING"
+[ -f "src/app/globals.css" ] && echo "globals.css: EXISTS" || echo "globals.css: MISSING"
+
+# 3. Read the stored project name from the manifest (if it exists)
+cat docs/.readme-manifest.json 2>/dev/null | grep '"project"' || echo "(no manifest)"
+```
+
+**Decide:**
+
+- If the manifest has a `"project"` field that matches the current `package.json` name
+  → skill is already adapted. **Skip to Step 1.**
+
+- If the manifest is missing, has no `"project"` field, or the name does not match
+  → skill needs to adapt. **Run the Discovery sub-steps below, then continue to Step 1.**
+
+---
+
+### Discovery (only when relevance check fails)
+
+Analyse the project from scratch to derive section config. This runs once per
+project and the result is stored in the manifest so future runs skip it.
+
+#### D1: Map the project structure
+
+```bash
+# Framework and stack
+cat package.json
+
+# Source tree (3 levels, no noise)
+find src -maxdepth 3 -type f \
+  -not -path '*/node_modules/*' \
+  -not -name '*.lock' \
+  | sort
+
+# Directory layout
+find . -maxdepth 3 -type d \
+  -not -path '*/node_modules/*' \
+  -not -path '*/.git/*' \
+  -not -path '*/.next/*' \
+  | sort
+
+# Config files
+ls vercel.json .env.example prisma/schema.prisma 2>/dev/null
+ls .github/workflows/ 2>/dev/null
+```
+
+#### D2: Derive the section → watched-files map
+
+From what exists, build the mapping. Rules:
+
+| If this exists | Include this section | Watch these files |
+|---|---|---|
+| `src/app/` or `src/pages/` | `architecture` | all source dirs that contain components/pages |
+| `src/components/` | `architecture` | add to architecture watch |
+| `src/data/` or `prisma/` | `data-contracts` | `src/data/` and/or `prisma/` |
+| `src/app/globals.css` or a CSS theme file | `design-system` | that file + `src/components/` |
+| `vercel.json` or `.github/workflows/` | `deployment` | those files + `package.json` |
+| Always | `getting-started` | `package.json` |
+| Always | `roadmap` | all source dirs |
+
+#### D3: Derive agent dispatch prompts
+
+For each section, build a prompt that:
+- Names the actual project (from `package.json` `name` field)
+- Lists only the file paths that were confirmed to exist in D1
+- Describes the actual architecture detected (e.g. Next.js App Router, Vite SPA, Express API)
+- Matches the README section name to what fits this project
+
+Store these derived prompts in memory for use in Step 4. They replace the
+hardcoded prompts below for this run.
+
+#### D4: Update the manifest with the new project identity
+
+Write the project name into the manifest now so the relevance check passes
+on all future runs:
+
+```json
+{ "project": "<package.json name>", ... }
+```
 
 ---
 
 ## Step 1: Read project context
 
-Read the following files before doing anything else:
+Read the following files:
 
 ```
-package.json              — scripts, dependencies, project name
-src/app/page.tsx          — entry point, features in use
-README.md                 — current state to understand what to preserve vs. replace
-.claude/agents/docs.md    — README structure, ownership model, writing standards
+package.json     — scripts, dependencies, project name
+README.md        — current state to understand what to preserve vs. replace
+.claude/agents/docs.md  — README structure, ownership model, writing standards
 ```
 
 Check whether these exist (note present/absent for later steps):
@@ -32,7 +130,6 @@ Check whether these exist (note present/absent for later steps):
 - `docs/diagrams/structure.svg`
 - `docs/diagrams/dataflow.svg`
 - `docs/diagrams/architecture.svg`
-- `.env.example`
 - `vercel.json`
 - `.github/workflows/`
 - `docs/.readme-manifest.json`
@@ -47,7 +144,8 @@ to skip.
 
 If the manifest does not exist, treat all sections as changed (first run).
 
-For each section, run:
+For each section in the derived section map (from Step 0, or the defaults below
+if relevance check passed), run:
 
 ```bash
 git log -1 --format="%H" -- <watched-files-for-section>
@@ -57,42 +155,54 @@ Compare the returned hash to the stored hash in the manifest. If they match,
 the section is **unchanged** — skip its agent dispatch. If they differ or the
 manifest has no entry, the section is **changed** — dispatch the agent.
 
-### Section → watched files mapping
+### Default section → watched files map (dev-portfolio-v1)
+
+Used only when the relevance check passes (same project as last run):
 
 | Section | Watched files |
 |---------|--------------|
 | `getting-started` | `package.json` |
-| `architecture` | `src/app/` `src/trpc/` `src/inngest/` `src/lib/` `src/features/` `prisma/` |
-| `data-contracts` | `prisma/schema.prisma` `src/trpc/routers/` `docs/` |
-| `env-variables` | `.env.example` `src/lib/auth.ts` `src/inngest/` |
+| `architecture` | `src/app/` `src/components/` `src/data/` |
+| `data-contracts` | `src/data/` |
+| `design-system` | `src/app/globals.css` `src/components/` |
 | `deployment` | `vercel.json` `.github/workflows/` `package.json` |
-| `roadmap` | `src/app/` `src/components/` `prisma/schema.prisma` |
+| `roadmap` | `src/app/` `src/components/` |
 
 Print a change summary before dispatching:
 
 ```
 Section changes detected:
-  getting-started  — CHANGED  (package.json updated)
-  architecture     — unchanged (skipping)
-  data-contracts   — CHANGED  (prisma/schema.prisma updated)
-  env-variables    — unchanged (skipping)
+  getting-started  — unchanged (skipping)
+  architecture     — CHANGED  (src/components/ updated)
+  data-contracts   — unchanged (skipping)
+  design-system    — CHANGED  (globals.css updated)
   deployment       — unchanged (skipping)
   roadmap          — CHANGED  (new components detected)
 ```
 
 ---
 
-## Step 3: Run `/arch-diagram` if diagrams are missing
+## Step 3: Regenerate diagrams if needed
 
-If any of the three SVGs from Step 1 are absent, run `/arch-diagram` now to
-generate them before dispatching agents.
+Run `/arch-diagram` now (before dispatching section agents) if **either** condition is true:
+
+- Any of the three SVGs from Step 1 are absent, **or**
+- The `architecture` section is marked **CHANGED** in Step 2
+
+The `arch-diagram` skill has its own component drift check and will skip individual
+diagrams that are already up to date — so calling it on every architecture change is safe.
+This ensures `docs/diagrams/*.excalidraw` and `docs/diagrams/*.svg` stay in sync with each other
+and with the assembled README.
 
 ---
 
 ## Step 4: Dispatch changed section agents in parallel
 
+If Discovery ran in Step 0, use the derived prompts from D3.
+Otherwise use the default prompts below.
+
 Only dispatch agents for sections marked **CHANGED** in Step 2.
-Skip unchanged sections entirely — do not re-read their files or regenerate their content.
+Skip unchanged sections entirely.
 
 Use the **Agent tool** to spawn all changed agents simultaneously in a single message.
 
@@ -107,28 +217,28 @@ Each agent must:
 *(skip if unchanged)*
 
 ```
-You are the architect agent for the aether-flow project.
+You are the architect agent for the dev-portfolio-v1 project.
 
 Read `.claude/agents/architect.md` for your role and standards.
 
 Your task: Write the `## Architecture` section for README.md.
 
 Source files to read:
-- `src/app/`        — App Router structure
-- `src/trpc/`       — API layer
-- `src/inngest/`    — Background job functions
-- `src/lib/`        — Shared infrastructure
-- `src/features/`   — Feature modules
-- `prisma/`         — Schema and migrations
+- `src/app/`           — App Router pages and layout
+- `src/components/`    — UI components grouped by page (home/, techstack/, shared)
+- `src/data/`          — Static TypeScript data grouped by page (home/, techstack/)
+- `src/app/globals.css`
 - `docs/diagrams/structure.svg`    (include image embed if it exists)
 - `docs/diagrams/dataflow.svg`     (include image embed if it exists)
 - `docs/diagrams/architecture.svg` (include image embed if it exists)
 
 The section must:
-- Open with 2–3 sentences describing the layered architecture and data flow
-- Describe each layer (App, Features, API, Background Execution, Infrastructure, Data)
+- Open with 2–3 sentences describing the three-layer architecture
+- Include a Pages table (route, file, description)
+- Include a Key components table (component, boundary, description)
+- Note that all section components are Server Components
 - Include diagram image embeds only if the SVG files exist
-- Note that `/arch-diagram` generates the diagrams if missing
+- End with: Run `/arch-diagram` in Claude Code to regenerate these diagrams if the component structure changes.
 
 Return the markdown section only. Start with `## Architecture`.
 ```
@@ -139,117 +249,100 @@ Return the markdown section only. Start with `## Architecture`.
 *(skip if unchanged)*
 
 ```
-You are the frontend agent for the aether-flow project.
+You are the frontend agent for the dev-portfolio-v1 project.
 
 Read `.claude/agents/frontend.md` for your role and standards.
 
 Your task: Write the `## Getting started` section for README.md.
 
 Source files to read:
-- `package.json` — use the exact script names and commands from the "scripts" field
+- `package.json` — use the exact script names from the "scripts" field
 
 The section must:
 - Show `bun install` then `bun dev` as a bash code block
-- Include a commands table with every script and a one-line description
-- Note that `dev:all` runs both Next.js and Inngest dev server together via mprocs
-- Use second person ("Run `bun dev`", not "you should run")
+- Include a commands table with: bun dev, bun build, bun start, bun lint, bun typecheck
+- End with: Open http://localhost:3000 in your browser.
+- Use second person
 
 Return the markdown section only. Start with `## Getting started`.
 ```
 
 ---
 
-### Dispatch 3 — `backend` → `## Environment variables`
+### Dispatch 3 — `spec` → `## Data contracts & schemas`
 *(skip if unchanged)*
 
 ```
-You are the backend agent for the aether-flow project.
-
-Read `.claude/agents/backend.md` for your role and standards.
-
-Your task: Write the `## Environment variables` section for README.md.
-
-Source files to read:
-- `.env.example` — if it exists, derive the variable list from it
-- `src/lib/auth.ts` — identify better-auth config variables
-- `src/inngest/functions.ts` — identify AI model env vars
-- `src/inngest/client.ts` — identify Inngest config vars
-
-The section must:
-- Include a table: Variable | Required | Description
-- Cover DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL, Inngest keys,
-  and the three optional AI provider key + model pairs
-- Note that each AI provider is only activated when its *_MODEL var is set
-- End with a note to add production vars in Vercel environment settings
-
-Return the markdown section only. Start with `## Environment variables`.
-```
-
----
-
-### Dispatch 4 — `spec` → `## Data contracts`
-*(skip if unchanged)*
-
-```
-You are the spec agent for the aether-flow project.
+You are the spec agent for the dev-portfolio-v1 project.
 
 Read `.claude/agents/spec.md` for your role and standards.
 
-Your task: Write the `## Data contracts` section for README.md.
+Your task: Write the `## Data contracts & schemas` section for README.md.
 
 Source files to read:
-- `prisma/schema.prisma` — confirm it exists and identify the ORM in use
-- `src/trpc/routers/_app.ts` — confirm it exists and identify the API layer
+- `src/data/home/`      — glob all .ts files
+- `src/data/techstack/` — glob all .ts files
 
-This section is intentionally lightweight — it is a pointer to source of truth
-files, not an inline API reference. Do NOT reproduce schema tables or procedure
-lists in the README. Full contract documentation belongs in generated API docs
-(e.g. OpenAPI via trpc-openapi, Scalar, or Redoc) when a renderer is adopted.
+The section must:
+- Open with: All content is static TypeScript in `src/data/`, no runtime fetching, no CMS, no database.
+- A `### src/data/home/` table: File | Exported type | Description
+- A `### src/data/techstack/` table: File | Exported type | Description
+- An import example block using the `@/data/*` alias
+- Conventions note: `as const` on static arrays
 
-The section must follow this exact format:
-
-> Full API reference not yet generated. When a spec renderer is adopted,
-> this section will link to it.
-
-| Layer | Tool | Source of truth |
-|-------|------|----------------|
-| Database schema | <ORM and version> | [`prisma/schema.prisma`](prisma/schema.prisma) |
-| API procedures | <API layer and version> | [`src/trpc/routers/_app.ts`](src/trpc/routers/_app.ts) |
-| Input validation | <validation library> | Inline per procedure |
-| Generated types | <generator> | `src/generated/prisma/` — never import from `@prisma/client` |
-
-If a spec renderer has been adopted (e.g. a docs/ folder with OpenAPI output exists),
-replace the blockquote with a direct link to the rendered docs instead.
-
-Return the markdown section only. Start with `## Data contracts`.
+Return the markdown section only. Start with `## Data contracts & schemas`.
 ```
 
 ---
 
-### Dispatch 5 — `devops` → `## Deployment`
+### Dispatch 4 — `design` → `## Design system`
 *(skip if unchanged)*
 
 ```
-You are the devops agent for the aether-flow project.
+You are the design agent for the dev-portfolio-v1 project.
+
+Read `.claude/agents/design.md` for your role and standards.
+
+Your task: Write the `## Design system` section for README.md.
+
+Source files to read:
+- `src/app/globals.css`
+- `src/components/ThemeProvider.tsx`
+
+The section must:
+- Explain CSS custom properties surfaced to Tailwind via `@theme inline`
+- Dark mode default (`:root`), light via `data-theme="light"` on `<html>`
+- First-visit detection flow (prefers-color-scheme → localStorage → ThemeProvider)
+- Token reference table: Token | Dark | Light — covering --background, --foreground, --heading, --accent, --surface
+- Mention smooth transition CSS
+
+Return the markdown section only. Start with `## Design system`.
+```
+
+---
+
+### Dispatch 5 — `devops` → `## Deployment & CI/CD`
+*(skip if unchanged)*
+
+```
+You are the devops agent for the dev-portfolio-v1 project.
 
 Read `.claude/agents/devops.md` for your role and standards.
 
-Your task: Write the `## Deployment` section for README.md.
+Your task: Write the `## Deployment & CI/CD` section for README.md.
 
 Source files to read:
-- `package.json` — build scripts
-- `vercel.json` — if it exists
-- `.github/workflows/` — if any workflow files exist
+- `package.json`
+- `vercel.json`          (if it exists)
+- `.github/workflows/`   (if any files exist)
 
 The section must:
-- Describe Vercel as the deployment target
-- Include a prerequisites table (PostgreSQL provider, Inngest Cloud)
-- Cover database migration steps (bun --bun run prisma migrate deploy)
-- Cover Inngest Cloud registration (/api/inngest endpoint)
-- If NO CI workflow exists, include a recommended minimal yaml config
-  (lint + typecheck + build) noting it is not yet set up
+- State Vercel is the deployment target, merging to `main` triggers production
+- Include a Vercel deploy badge/button
+- Note preview deployments for every PR
+- If NO CI workflow exists, include the recommended minimal yaml (lint + typecheck + build)
 
-Return the markdown section only. Start with `## Deployment`.
+Return the markdown section only. Start with `## Deployment & CI/CD`.
 ```
 
 ---
@@ -258,22 +351,21 @@ Return the markdown section only. Start with `## Deployment`.
 *(skip if unchanged)*
 
 ```
-You are the enhancement agent for the aether-flow project.
+You are the enhancement agent for the dev-portfolio-v1 project.
 
 Read `.claude/agents/enhancement.md` for your role and standards.
 
 Your task: Write the `## Roadmap` section for README.md.
 
 Source files to read:
-- `src/app/` (glob) — understand what pages exist
-- `src/components/` (glob) — understand current component set
-- `prisma/schema.prisma` — understand current data model
+- `src/app/` (glob)
+- `src/components/` (glob)
 
 The section must:
 - Only list features genuinely NOT yet in the codebase
-- Use three groups: **In progress**, **Planned**, **Stretch goals**
-- Use checkbox format: `- [ ] Feature`
-- Prioritise by product impact
+- Three groups: **In progress**, **Planned**, **Stretch goals**
+- Checkbox format: `- [ ] Feature`
+- Prioritise by recruiter and product impact
 
 Return the markdown section only. Start with `## Roadmap`.
 ```
@@ -284,90 +376,78 @@ Return the markdown section only. Start with `## Roadmap`.
 
 Always rewrite these — they are owned by the docs agent and not change-gated:
 
-**Project header** — project name from `package.json`, one-sentence description,
-placeholder live URL if unknown.
+**Project header** — project name from `package.json`, one-sentence description, live URL placeholder and Architecture diagram link.
 
-**`## Overview`** — 2–3 sentences on what the project is, key architectural decisions,
-and a bold tech stack line from the actual dependencies in `package.json`.
+**`## Overview`** — 2–3 sentences on what the project is, key architectural decisions, and a bold tech stack line from the actual dependencies in `package.json`.
 
-**`## Tech stack`** — read `dependencies` and `devDependencies` from `package.json`.
-Show only the primary/main libraries — group related packages into one row where possible
-(e.g. `@trpc/*`, `@ai-sdk/*`). Omit internal markers (`client-only`, `server-only`),
-type packages (`@types/*`), and scaffolding tools only used at setup time.
+**`## Environment variables`** — this project requires no environment variables. Write:
 
-Table format: **Package** | **Category** | **Purpose** (one sentence).
+> No environment variables are required to run this project locally.
+>
+> If environment variables are added in future (for example, to support a contact form or external API), they should be:
+> 1. Added to a `.env.example` file at the project root (committed, with values redacted)
+> 2. Configured in Vercel under **Project Settings → Environment Variables**
 
-Use these categories (omit empty ones):
-Framework · Language · Database & ORM · Auth · API layer · AI ·
-Background jobs · Forms & validation · UI components · Styling ·
-Linting · Formatting · Tooling
+If Discovery ran and found a `.env.example` or environment variable usage in source files,
+replace this with an actual environment variables table instead.
 
 ---
 
 ## Step 6: Assemble README.md
 
-Merge sections in this exact order. For unchanged sections, preserve the existing
-content from the current README.md verbatim — do not regenerate it.
+Merge sections in this order. For unchanged sections, preserve existing content verbatim.
+
+Use the section order that was derived in Discovery if it ran. Otherwise use this default:
 
 ```
 # [project name]
-[tagline]
-[links]
+[tagline + links]
 
 ## Overview
-## Tech stack
 ## Getting started
 ## Architecture
-## Data contracts
+## Data contracts & schemas
+## Design system
 ## Environment variables
-## Deployment
+## Deployment & CI/CD
 ## Roadmap
 ```
 
-Apply docs writing standards:
-- Second person for instructions
-- Active voice throughout
-- No marketing speak
-- Code blocks for all commands
-- Every section must be present even if minimal
-
-Write the final assembled content to **`README.md`**, replacing it entirely.
+Write the final content to **`README.md`**, replacing it entirely.
 
 ---
 
 ## Step 7: Update manifest
 
-After successfully writing README.md, update `docs/.readme-manifest.json`
-with the current latest git commit hash for each section's watched files:
+After successfully writing README.md, update `docs/.readme-manifest.json`:
 
 ```bash
 git log -1 --format="%H" -- <watched-files>
 ```
 
-Write the manifest as:
-
 ```json
 {
+  "project": "<package.json name>",
   "assembled": "<ISO timestamp>",
   "sections": {
     "getting-started":  { "hash": "<hash>", "files": ["package.json"] },
-    "architecture":     { "hash": "<hash>", "files": ["src/app/", "src/trpc/", "src/inngest/", "src/lib/", "src/features/", "prisma/"] },
-    "data-contracts":   { "hash": "<hash>", "files": ["prisma/schema.prisma", "src/trpc/routers/"] },
-    "env-variables":    { "hash": "<hash>", "files": [".env.example", "src/lib/auth.ts", "src/inngest/"] },
+    "architecture":     { "hash": "<hash>", "files": ["src/app/", "src/components/", "src/data/"] },
+    "data-contracts":   { "hash": "<hash>", "files": ["src/data/"] },
+    "design-system":    { "hash": "<hash>", "files": ["src/app/globals.css", "src/components/"] },
     "deployment":       { "hash": "<hash>", "files": ["vercel.json", ".github/workflows/", "package.json"] },
-    "roadmap":          { "hash": "<hash>", "files": ["src/app/", "src/components/", "prisma/schema.prisma"] }
+    "roadmap":          { "hash": "<hash>", "files": ["src/app/", "src/components/"] }
   }
 }
 ```
 
-Create `docs/` directory first if it does not exist.
+The `"project"` field is what the relevance check in Step 0 reads on the next run.
 
 ---
 
 ## Step 8: Summary
 
 Report:
-- Which sections were regenerated vs. skipped (unchanged)
-- Estimated tokens saved by skipping unchanged sections
-- Any section where an agent flagged missing source data or made an assumption
-- Files that should be created (`.env.example`, `vercel.json`, `.github/workflows/ci.yml`)
+- Whether Discovery ran (new project detected) or was skipped (same project)
+- Which sections were regenerated vs. skipped
+- Whether `/arch-diagram` was triggered
+- Any assumptions made during Discovery
