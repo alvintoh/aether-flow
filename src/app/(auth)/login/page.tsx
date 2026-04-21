@@ -4,7 +4,7 @@ import Link from "next/link";
 import { LoginForm } from "@/features/auth/components/login-form";
 import { requireUnauth } from "@/lib/auth-utils";
 
-const Page = async () => {
+export default async function Page() {
   await requireUnauth();
 
   return (
@@ -26,6 +26,4 @@ const Page = async () => {
       </div>
     </main>
   );
-};
-
-export default Page;
+}

@@ -12,5 +12,22 @@
     "react/jsx-no-useless-fragment": "warn",
     "nextjs/no-img-element": "error",
     "nextjs/no-html-link-for-pages": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/app/**/page.tsx",
+        "src/app/**/layout.tsx",
+        "src/app/**/template.tsx",
+        "src/app/**/error.tsx",
+        "src/app/**/global-error.tsx",
+        "src/app/**/loading.tsx",
+        "src/app/**/not-found.tsx",
+        "src/app/**/default.tsx"
+      ],
+      "rules": {
+        "func-style": ["error", "declaration", { "allowArrowFunctions": false }]
+      }
+    }
+  ]
 }

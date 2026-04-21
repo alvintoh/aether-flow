@@ -8,7 +8,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { LogoutButton } from "./logout";
 
-const Page = () => {
+export default function Page() {
   const trpc = useTRPC();
   const { data } = useQuery(trpc.getWorkflows.queryOptions());
 
@@ -44,6 +44,4 @@ const Page = () => {
       <LogoutButton />
     </div>
   );
-};
-
-export default Page;
+}
