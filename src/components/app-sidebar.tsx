@@ -105,7 +105,7 @@ export default function AppSidebar() {
             <SidebarMenuButton
               tooltip="Upgrade to Pro"
               className="gap-x-4 h-10 px-4"
-              onClick={() => router.push("/upgrade")}
+              onClick={() => authClient.checkout({ slug: "pro" })}
             >
               <StarIcon className="h-4 w-4" />
               <span>Upgrade to Pro</span>
