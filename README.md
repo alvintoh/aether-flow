@@ -83,7 +83,16 @@ Aether Flow is organized as a strict three-layer system: the Next.js App Router 
 
 **Data persistence (`prisma/`)** — Schema-first PostgreSQL via Prisma 7. The generated client lives in `src/generated/prisma/` and is imported only through `src/lib/db.ts`.
 
-To generate visual diagrams of the folder structure, composition tree, and data flow, run `/arch-diagram`. Diagrams are written to `docs/diagrams/`.
+### Folder Structure
+![Folder Structure](docs/diagrams/structure.svg)
+
+### Data Flow
+![Data Flow](docs/diagrams/dataflow.svg)
+
+### System Architecture
+![System Architecture](docs/diagrams/architecture.svg)
+
+To regenerate these diagrams, run `/arch-diagram`. Diagrams are written to `docs/diagrams/`.
 
 ---
 

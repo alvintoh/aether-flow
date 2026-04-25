@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 575 880" width="575" height="880" style="font-family:ui-rounded,'Hiragino Maru Gothic ProN',Quicksand,Comfortaa,Manjari,'Arial Rounded MT Bold',Calibri,source-sans-pro,sans-serif;">
+<defs><marker id="ah" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#555"/></marker><filter id="shadow" x="-5%" y="-5%" width="115%" height="115%"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000018"/></filter></defs>
+<rect width="575" height="880" fill="#f8f9fa" rx="4"/>
+<polyline points="32,64 32,842" fill="none" stroke="#adb5bd" stroke-width="2" stroke-dasharray=""/>
+<polyline points="32,102 72,102" fill="none" stroke="#adb5bd" stroke-width="2" stroke-dasharray=""/>
+<polyline points="112,120 112,668" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="112,142 152,142" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,158 192,250" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,174 228,174" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,204 228,204" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,234 228,234" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="112,280 152,280" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,294 192,326" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,310 228,310" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="112,352 152,352" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,366 192,428" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,382 228,382" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,412 228,412" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="112,452 152,452" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="112,486 152,486" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,500 192,532" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,516 228,516" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="112,556 152,556" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,570 192,602" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="192,586 228,586" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="112,624 152,624" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="112,656 152,656" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="32,702 72,702" fill="none" stroke="#adb5bd" stroke-width="2" stroke-dasharray=""/>
+<polyline points="32,736 72,736" fill="none" stroke="#adb5bd" stroke-width="2" stroke-dasharray=""/>
+<polyline points="112,750 112,812" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="112,766 148,766" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="112,796 148,796" fill="none" stroke="#adb5bd" stroke-width="1" stroke-dasharray=""/>
+<polyline points="32,840 72,840" fill="none" stroke="#adb5bd" stroke-width="2" stroke-dasharray=""/>
+<text text-anchor="middle" fill="#1e1e2e" font-size="22" font-weight="700" font-family="inherit">
+  <tspan x="182" y="51.8">aether-flow/</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="16" font-weight="600" font-family="inherit">
+  <tspan x="108" y="104.4">src/</tspan>
+</text>
+<text text-anchor="middle" fill="#1971c2" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="188" y="142.6">app/</tspan>
+</text>
+<text text-anchor="middle" fill="#1971c2" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="353" y="174.6">(dashboard)/   (9 files)</tspan>
+</text>
+<text text-anchor="middle" fill="#1971c2" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="343" y="204.6">(auth)/   (2 files)</tspan>
+</text>
+<text text-anchor="middle" fill="#1971c2" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="333" y="234.6">api/   (4 files)</tspan>
+</text>
+<text text-anchor="middle" fill="#1971c2" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="223" y="280.6">components/</tspan>
+</text>
+<text text-anchor="middle" fill="#1971c2" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="343" y="310.6">ui/   (56 files)</tspan>
+</text>
+<text text-anchor="middle" fill="#2f9e44" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="213" y="352.6">features/</tspan>
+</text>
+<text text-anchor="middle" fill="#2f9e44" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="333" y="382.6">auth/   (2 files)</tspan>
+</text>
+<text text-anchor="middle" fill="#2f9e44" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="353" y="412.6">subscriptions/   (1 file)</tspan>
+</text>
+<text text-anchor="middle" fill="#0c8599" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="258" y="452.6">lib/   (6 files)</tspan>
+</text>
+<text text-anchor="middle" fill="#6741d9" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="188" y="486.6">trpc/</tspan>
+</text>
+<text text-anchor="middle" fill="#6741d9" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="343" y="516.6">routers/   (5 files)</tspan>
+</text>
+<text text-anchor="middle" fill="#c92a2a" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="223" y="556.6">generated/</tspan>
+</text>
+<text text-anchor="middle" fill="#c92a2a" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="388" y="586.6">prisma/   (5 files) — DO NOT EDIT</tspan>
+</text>
+<text text-anchor="middle" fill="#6741d9" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="258" y="624.6">inngest/   (2 files)</tspan>
+</text>
+<text text-anchor="middle" fill="#6741d9" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="258" y="656.6">hooks/   (1 file)</tspan>
+</text>
+<text text-anchor="middle" fill="#0c8599" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="218" y="702.6">prisma/   (schema.prisma)</tspan>
+</text>
+<text text-anchor="middle" fill="#e67700" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="128" y="736.6">.claude/</tspan>
+</text>
+<text text-anchor="middle" fill="#e67700" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="253" y="766.6">agents/   (8 files)</tspan>
+</text>
+<text text-anchor="middle" fill="#e67700" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="253" y="796.6">skills/   (11 files)</tspan>
+</text>
+<text text-anchor="middle" fill="#e67700" font-size="14" font-weight="600" font-family="inherit">
+  <tspan x="178" y="840.6">docs/   (diagrams)</tspan>
+</text>
+</svg>

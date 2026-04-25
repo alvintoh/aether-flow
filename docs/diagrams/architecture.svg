@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1294 702" width="1294" height="702" style="font-family:Virgil,'Segoe UI',system-ui,-apple-system,sans-serif;">
+<defs><marker id="ah" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#555"/></marker><filter id="shadow" x="-5%" y="-5%" width="115%" height="115%"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000018"/></filter></defs>
+<rect width="1294" height="702" fill="#f8f9fa" rx="4"/>
+<rect x="882" y="90" width="380" height="460" rx="10"  fill="#ffd8a8" fill-opacity="0.2" stroke="#e67700" stroke-width="1.5"/>
+<rect x="537" y="90" width="330" height="460" rx="10"  fill="#d0bfff" fill-opacity="0.2" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="237" y="90" width="285" height="460" rx="10"  fill="#b2f2bb" fill-opacity="0.2" stroke="#2f9e44" stroke-width="1.5"/>
+<rect x="32" y="90" width="190" height="460" rx="10"  fill="#a5d8ff" fill-opacity="0.2" stroke="#1971c2" stroke-width="1.5"/>
+<rect x="537" y="570" width="200" height="100" rx="10"  fill="#c3fae8" fill-opacity="0.2" stroke="#0c8599" stroke-width="1.5"/>
+<rect x="549" y="126" width="305" height="52" rx="10" filter="url(#shadow)" fill="#d0bfff" fill-opacity="1" stroke="#6741d9" stroke-width="2"/>
+<rect x="249" y="198" width="260" height="52" rx="10" filter="url(#shadow)" fill="#b2f2bb" fill-opacity="1" stroke="#2f9e44" stroke-width="2"/>
+<rect x="249" y="270" width="260" height="52" rx="10" filter="url(#shadow)" fill="#b2f2bb" fill-opacity="1" stroke="#2f9e44" stroke-width="2"/>
+<rect x="249" y="342" width="260" height="52" rx="10" filter="url(#shadow)" fill="#b2f2bb" fill-opacity="1" stroke="#2f9e44" stroke-width="2"/>
+<rect x="549" y="214" width="305" height="34" rx="10" filter="url(#shadow)" fill="#d0bfff" fill-opacity="0.7" stroke="#6741d9" stroke-width="2"/>
+<rect x="549" y="258" width="305" height="34" rx="10" filter="url(#shadow)" fill="#d0bfff" fill-opacity="0.85" stroke="#6741d9" stroke-width="2"/>
+<rect x="549" y="302" width="305" height="34" rx="10" filter="url(#shadow)" fill="#d0bfff" fill-opacity="1" stroke="#6741d9" stroke-width="2"/>
+<rect x="44" y="126" width="165" height="52" rx="10" filter="url(#shadow)" fill="#a5d8ff" fill-opacity="1" stroke="#1971c2" stroke-width="2"/>
+<rect x="44" y="198" width="165" height="52" rx="10" filter="url(#shadow)" fill="#a5d8ff" fill-opacity="1" stroke="#1971c2" stroke-width="2"/>
+<rect x="44" y="270" width="165" height="52" rx="10" filter="url(#shadow)" fill="#a5d8ff" fill-opacity="1" stroke="#1971c2" stroke-width="2"/>
+<rect x="44" y="342" width="165" height="52" rx="10" filter="url(#shadow)" fill="#a5d8ff" fill-opacity="1" stroke="#1971c2" stroke-width="2"/>
+<rect x="894" y="202" width="155" height="52" rx="10" filter="url(#shadow)" fill="#ffd8a8" fill-opacity="1" stroke="#e67700" stroke-width="2"/>
+<rect x="894" y="274" width="155" height="52" rx="10" filter="url(#shadow)" fill="#ffd8a8" fill-opacity="1" stroke="#e67700" stroke-width="2"/>
+<rect x="377" y="126" width="132" height="52" rx="10" filter="url(#shadow)" fill="#b2f2bb" fill-opacity="1" stroke="#2f9e44" stroke-width="2"/>
+<rect x="249" y="126" width="115" height="52" rx="10" filter="url(#shadow)" fill="#b2f2bb" fill-opacity="1" stroke="#2f9e44" stroke-width="2"/>
+<ellipse cx="971.5" cy="153" rx="77.5" ry="27" fill="#ffd8a8" fill-opacity="1" stroke="#e67700" stroke-width="2"/>
+<ellipse cx="1157.5" cy="153" rx="87.5" ry="27" fill="#ffd8a8" fill-opacity="1" stroke="#e67700" stroke-width="2"/>
+<ellipse cx="1157.5" cy="239" rx="87.5" ry="17" fill="#ffd8a8" fill-opacity="1" stroke="#e67700" stroke-width="2"/>
+<ellipse cx="1157.5" cy="283" rx="87.5" ry="17" fill="#ffd8a8" fill-opacity="1" stroke="#e67700" stroke-width="2"/>
+<ellipse cx="1157.5" cy="327" rx="87.5" ry="17" fill="#ffd8a8" fill-opacity="1" stroke="#e67700" stroke-width="2"/>
+<ellipse cx="624.5" cy="618" rx="72.5" ry="32" fill="#c3fae8" fill-opacity="1" stroke="#0c8599" stroke-width="2"/>
+<text text-anchor="middle" fill="#1e1e2e" font-size="24" font-weight="700" font-family="inherit">
+  <tspan x="642" y="53.6">aether-flow — System Architecture</tspan>
+</text>
+<text text-anchor="middle" fill="#1971c2" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="127" y="105.7">Browser Runtime</tspan>
+</text>
+<text text-anchor="middle" fill="#2f9e44" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="379.5" y="105.7">Next.js 16 App Router</tspan>
+</text>
+<text text-anchor="middle" fill="#6741d9" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="702" y="105.7">tRPC v11 API Layer</tspan>
+</text>
+<text text-anchor="middle" fill="#e67700" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="1072" y="105.7">External Services</tspan>
+</text>
+<text text-anchor="middle" fill="#0c8599" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="637" y="585.7">Data Store</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="126.5" y="141.7">shadcn/ui Components</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="126.5" y="159.9">Radix Nova style</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="126.5" y="213.7">tRPC Client</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="126.5" y="231.9">React Query v5</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="126.5" y="285.7">Auth Client</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="126.5" y="303.9">better-auth/client</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="126.5" y="357.7">useSubscription()</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="126.5" y="375.9">Polar.sh portal link</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="306.5" y="141.7">(auth)</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="306.5" y="159.9">Login · Register</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="443" y="141.7">(dashboard)</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="443" y="159.9">Workflows · Creds</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="379" y="213.7">DashboardLayout</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="379" y="231.9">requireAuth() server guard</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="379" y="285.7">RSC Pages</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="379" y="303.9">Server Components · Server Caller</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="379" y="357.7">Inngest Handlers</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="379" y="375.9">src/inngest/ · AI execution jobs</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="701.5" y="141.7">/api/trpc/[trpc]</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="701.5" y="159.9">Route Handler · input validation</tspan>
+</text>
+<text text-anchor="middle" fill="#6741d9" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="701.5" y="203.9">Procedure Tiers:</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="12" font-weight="400" font-family="inherit">
+  <tspan x="701.5" y="234.8">baseProcedure — public</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="12" font-weight="400" font-family="inherit">
+  <tspan x="701.5" y="278.8">protectedProcedure — auth session check</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="12" font-weight="400" font-family="inherit">
+  <tspan x="701.5" y="322.8">premiumProcedure — subscription check</tspan>
+</text>
+<text text-anchor="middle" fill="#6741d9" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="701.5" y="363.9">TypeScript contract end-to-end · AppRouter → client</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="701.5" y="383.9">Routers: workflows · executions · credentials · testAI</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="971.5" y="145.7">better-auth 1.6</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="971.5" y="163.9">session management</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="1157.5" y="145.7">Polar.sh</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="1157.5" y="163.9">billing · subscriptions</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="971.5" y="217.7">Inngest 4.2</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="971.5" y="235.9">Durable job queue</tspan>
+</text>
+<text text-anchor="middle" fill="#e67700" font-size="12" font-weight="400" font-family="inherit">
+  <tspan x="1157.5" y="212.8">Vercel AI SDK 6.0</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="12" font-weight="400" font-family="inherit">
+  <tspan x="1157.5" y="241.8">Anthropic Claude</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="12" font-weight="400" font-family="inherit">
+  <tspan x="1157.5" y="285.8">OpenAI GPT</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="12" font-weight="400" font-family="inherit">
+  <tspan x="1157.5" y="329.8">Google Gemini</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="971.5" y="289.7">Sentry 10</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="971.5" y="307.9">Observability · errors</tspan>
+</text>
+<text text-anchor="middle" fill="#1e1e2e" font-size="13" font-weight="400" font-family="inherit">
+  <tspan x="624.5" y="609.7">PostgreSQL</tspan>
+</text>
+<text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
+  <tspan x="624.5" y="627.9">Prisma 7 · adapter-pg</tspan>
+</text>
+<polyline points="209,152 249,152" fill="none" stroke="#888" stroke-width="2" marker-end="url(#ah)"/>
+<polyline points="209,224 209,188 549,188 549,152" fill="none" stroke="#1971c2" stroke-width="2" marker-end="url(#ah)"/>
+<polyline points="509,296 529,296 529,152 549,152" fill="none" stroke="#2f9e44" stroke-width="2" marker-end="url(#ah)"/>
+<polyline points="854,275 882,275 882,195 894,195 894,153" fill="none" stroke="#e67700" stroke-width="2" marker-end="url(#ah)"/>
+<polyline points="854,319 882,319 882,90 1158,90 1158,126" fill="none" stroke="#e67700" stroke-width="2" marker-end="url(#ah)"/>
+<polyline points="854,319 872,319 872,228 894,228" fill="none" stroke="#e67700" stroke-width="2" marker-end="url(#ah)"/>
+<polyline points="1049,228 1070,228 1070,239" fill="none" stroke="#888" stroke-width="2" marker-end="url(#ah)"/>
+<polyline points="1049,228 1070,228 1070,283" fill="none" stroke="#888" stroke-width="2" marker-end="url(#ah)"/>
+<polyline points="1049,228 1070,228 1070,327" fill="none" stroke="#888" stroke-width="2" marker-end="url(#ah)"/>
+<polyline points="701,336 701,400 632,400 632,586" fill="none" stroke="#0c8599" stroke-width="2" marker-end="url(#ah)"/>
+</svg>
