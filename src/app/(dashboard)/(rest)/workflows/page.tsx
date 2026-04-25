@@ -1,7 +1,3 @@
-import { requireAuth } from "@/lib/auth-utils";
-
-export default async function Page() {
-  await requireAuth();
-
+export default function Page() {
   return <p>Workflows</p>;
 }
