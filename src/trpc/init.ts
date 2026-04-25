@@ -2,6 +2,7 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import { headers } from "next/headers";
 
 import { auth } from "@/lib/auth";
+import { polarClient } from "@/lib/polar";
 /**
  * This context creator accepts `headers` so it can be reused in both
  * the RSC server caller (where you pass `next/headers`) and the
@@ -43,3 +44,21 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
     ctx: { ...ctx, auth: session },
   });
 });
+
+export const premiumProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+    const customer = await polarClient.customers.getStateExternal({
+      externalId: ctx.auth.user.id,
+    });
+
+    if (
+      !customer.activeSubscriptions ||
+      customer.activeSubscriptions.length === 0
+    ) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Active subscription required",
+      });
+    }
+
+    return next({ ctx: { ...ctx, customer } });
+  });
