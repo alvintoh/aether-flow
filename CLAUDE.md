@@ -61,12 +61,13 @@ bun --bun run prisma [cmd]   # run prisma CLI (must use --bun flag)
 
 | Skill             | Description                                                             |
 | ----------------- | ----------------------------------------------------------------------- |
-| `/arch-add`       | Evaluate adding a new lib before installing — feasibility and fit       |
 | `/arch-diagram`   | Generate Excalidraw architecture diagrams → `docs/diagrams/`            |
-| `/arch-replace`   | Evaluate replacing a tool/lib before migrating — Go / No-Go verdict     |
+| `/arch-evaluate`  | Evaluate adding or replacing a lib/tool — Go / Conditional Go / Not Needed / No-Go |
 | `/claude-sync`    | Copy .claude/ folder to another project, with diff and confirmation     |
 | `/commit-review`  | Stage all changes, review, suggest commit message                       |
 | `/design-review`  | UI/UX review of all components in `src/components/`                     |
 | `/docs-assemble`  | Orchestrate all agents to assemble a complete README.md                 |
 | `/fe-create`      | Scaffold and build a new frontend feature following project conventions  |
+| `/fe-fix`         | Surgically fix a specific bug — reads only affected files, min change   |
+| `/fe-refactor`    | Structural improvements to existing code — no behaviour changes         |
 | `/fe-review`      | Full frontend review — lint, typecheck, best practices                  |

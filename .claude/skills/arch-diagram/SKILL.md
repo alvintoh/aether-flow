@@ -12,277 +12,206 @@ argument-hint: "[all|structure|dataflow|architecture]"
 
 # Architecture Diagram Generator
 
-Generate Excalidraw diagrams for the current repository, export them to SVG,
-and update `README.md` — all in one run.
+Generate Excalidraw diagrams, export SVGs, and update `README.md` in one run.
 
 ## Arguments
 
-- `/arch-diagram all` — Generate all 3 diagrams (default)
-- `/arch-diagram structure` — Folder/file structure only
-- `/arch-diagram dataflow` — Data flow diagram only
+- `/arch-diagram all` — All 3 diagrams (default if no arg given)
+- `/arch-diagram structure` — Folder structure only
+- `/arch-diagram dataflow` — Data flow only
 - `/arch-diagram architecture` — System architecture only
 
-If no argument given, generate all 3.
+---
 
-## Step 1: Analyze the Repository
-
-Before drawing anything, gather context:
+## Step 1: Discover
 
 ```bash
-# Get project structure (2 levels deep, ignore noise)
-find . -maxdepth 3 -type f \
-  -not -path '*/node_modules/*' \
-  -not -path '*/.git/*' \
-  -not -path '*/dist/*' \
-  -not -path '*/build/*' \
-  -not -path '*/.next/*' \
-  -not -path '*/gen/*' \
-  -not -name '*.lock' \
-  -not -name '*.sum' \
-  | head -80
-
-# Get directory tree (folders only)
 find . -maxdepth 3 -type d \
-  -not -path '*/node_modules/*' \
-  -not -path '*/.git/*' \
-  -not -path '*/dist/*' \
-  -not -path '*/build/*' \
-  | sort
-
-# Check for key config files that reveal the stack
-cat package.json 2>/dev/null | head -30
-cat go.mod 2>/dev/null | head -20
-cat buf.yaml 2>/dev/null || cat buf.gen.yaml 2>/dev/null
-ls proto/ 2>/dev/null || ls *.proto 2>/dev/null
+  -not -path '*/node_modules/*' -not -path '*/.git/*' \
+  -not -path '*/dist/*' -not -path '*/.next/*' | sort
+cat package.json 2>/dev/null | head -20
 ```
 
-Read the project's CLAUDE.md if it exists for additional context about
-the architecture, conventions, and structure.
+Also read `CLAUDE.md` if present.
 
-## Step 2: Create Output Directory
+---
+
+## Step 2: Create Output Dir
 
 ```bash
 mkdir -p docs/diagrams
 ```
 
-## Step 3: Generate Diagrams
+---
 
-Use the **Excalidraw MCP tool** (`create_view`) to render each diagram
-inline in the conversation. Follow the Excalidraw format rules strictly.
+## Step 3: Draw Diagrams
 
-### General Diagram Rules
+Use `create_view` (Excalidraw MCP). Build each diagram **section-by-section** — never generate an entire complex diagram in one shot; it produces worse layout and risks hitting output limits.
 
-- ALWAYS start with a `cameraUpdate` as the first element
-- Use the Excalidraw color palette consistently:
-  - Light Blue `#a5d8ff` — Frontend / UI layer
-  - Light Green `#b2f2bb` — Backend / API layer
-  - Light Orange `#ffd8a8` — External services / infra
-  - Light Purple `#d0bfff` — Middleware / processing
-  - Light Teal `#c3fae8` — Data / storage layer
-  - Light Yellow `#fff3bf` — Config / definitions (like .proto files)
-  - Light Red `#ffc9c9` — Generated code (don't edit)
-- Use `roundness: { "type": 3 }` on all rectangles
-- Minimum fontSize: 14 for body text, 16 for section headers, 20+ for diagram titles
-- Use background zone rectangles (opacity: 20-30) to group related components
+### Global Rules
 
-### CRITICAL: Text Inside Shapes
+- First element: always `cameraUpdate`
+- `roughness: 0`, `strokeWidth: 2` (shapes/arrows), `strokeWidth: 1` (dividers)
+- `opacity: 100` on all elements; zone backgrounds: `opacity: 20`
+- Rectangles: `roundness: {"type": 3}`
+- Font: body `fontSize: 14`, headers `16`, titles `20+`, `fontFamily: 1`, `textAlign: "center"`
+- Text height: `fontSize × lineCount × 1.4`
+- **Never** use the `label` property on rectangles — pair each rect with separate `text` elements
+- Text inside rect: title `y = rect.y + 10`, body `y = title.y + title.height + 6`, same `x`/`width` as rect; 10px padding all sides
 
-**NEVER use the `label` property on rectangles — it is not supported and silently drops all text.**
+### Colors
 
-Instead, pair every rectangle with one or more separate `text` elements positioned inside it:
+| Layer | Background | Stroke |
+|-------|-----------|--------|
+| Frontend / Browser | `#a5d8ff` | `#1971c2` |
+| Backend / API | `#b2f2bb` | `#2f9e44` |
+| External / Infra | `#ffd8a8` | `#e67700` |
+| Middleware / Processing | `#d0bfff` | `#6741d9` |
+| Data / Storage | `#c3fae8` | `#0c8599` |
+| Config / Definitions | `#fff3bf` | `#e67700` |
+| Generated (DO NOT EDIT) | `#ffc9c9` | `#c92a2a` |
 
-```json
-{"type":"rectangle","id":"box1","x":100,"y":100,"width":200,"height":80,
- "strokeColor":"#339af0","backgroundColor":"#a5d8ff","fillStyle":"solid","opacity":100,"roundness":{"type":3}},
-{"type":"text","id":"box1_title","x":100,"y":112,"width":200,"height":20,
- "text":"ComponentName","fontSize":16,"fontFamily":2,"textAlign":"center",
- "strokeColor":"#1971c2","backgroundColor":"transparent","fillStyle":"solid","opacity":100},
-{"type":"text","id":"box1_body","x":110,"y":138,"width":180,"height":36,
- "text":"file.tsx\nhelper.ts","fontSize":13,"fontFamily":2,"textAlign":"center",
- "strokeColor":"#333","backgroundColor":"transparent","fillStyle":"solid","opacity":100}
-```
+### Shapes
 
-Rules for text positioning:
+| Concept | Shape |
+|---------|-------|
+| Labels, descriptions, detail text | free-floating `text` (default) |
+| Section / zone title | free-floating `text` (larger font) |
+| Process step, named module | `rectangle` |
+| Decision / branch | `diamond` |
+| Origin / trigger / endpoint | `ellipse` |
+| Layer grouping zone | large `rectangle`, `opacity: 20` |
 
-- Title text: `y = rect.y + 10`, `x = rect.x`, `width = rect.width`, `textAlign: "center"`
-- Body text: `y = title.y + title.height + 6`, same x/width, `textAlign: "center"`
-- Leave at least 10px padding on all sides inside the rectangle
-- Set `height` on text elements to roughly `fontSize * lineCount * 1.4`
-- Use `\n` for multi-line text within a single text element
-- Match text color to a darker shade of the rectangle's stroke color
+### Patterns
+
+| Pattern | Use for |
+|---------|---------|
+| **Tree** | Hierarchy — vertical trunk `line` + horizontal branch `line`s + free-floating text. No boxes. |
+| **Swimlane** | Data flow — stacked horizontal zone rows, arrows flow left→right through/between rows |
+| **Zone layout** | Architecture — translucent background rects grouping components by layer |
+| **Fan-out** | One source → many targets — central element, arrows radiating out |
+| **Timeline** | Sequence — horizontal line + small dot `ellipse`s (10–20px) + free-floating labels |
 
 ---
 
 ### Diagram A: Folder Structure
 
-**Purpose:** Show the directory layout with color-coded layers.
+**Goal**: Show the directory hierarchy, color-coded by architectural layer.
 
-**Layout approach:**
+**Macro-first**: If the repo has >30 files, show **directories only** — no individual files.
+Add `(N files)` counts inline. Limit depth to 2 levels below `src/`.
 
-- Tree/hierarchy flowing top-to-bottom or left-to-right
-- Root project at top, major directories as branches
-- Color-code by layer (frontend = blue, backend = green, shared = yellow)
-- Mark /gen or generated folders in red with "DO NOT EDIT" annotation
-- Show key files inside each directory (main entry points, config files)
-- Camera: start at XL (1200x900), may need XXL for large repos
-
-Draw each directory as a labeled rectangle. Use arrows to show
-parent → child relationships. Group with translucent zone backgrounds.
+**Pattern**: Tree
+- Trunk = vertical `line`; branches = horizontal `line`s; labels = free-floating `text`
+- Color-code each branch by its layer using the palette
+- Mark generated dirs (`src/generated/`, `/gen`) in red with a "DO NOT EDIT" annotation
+- Camera: 1200×900 minimum; scale up for large repos
 
 ---
 
 ### Diagram B: Data Flow
 
-**Purpose:** Show how data moves through the system end-to-end.
+**Goal**: Show a complete request/response cycle end-to-end.
 
-**Layout approach:**
+**Pattern**: Horizontal swimlane — stacked zone rows (top → bottom = client → server → storage), arrows flow left-to-right for requests, right-to-left (dashed) for responses.
 
-- Horizontal left-to-right flow
-- Start from source-of-truth contracts/data definitions
-- Show generation/transformation steps where relevant
-- Show request and response paths through client, transport, server, and storage
-- Use labeled arrows for key transitions
+**Standard rows** (adapt to the actual stack):
+1. **Browser** (`#a5d8ff`, 20%) — user action, UI rendering
+2. **Next.js Server** (`#b2f2bb`, 20%) — RSC, Server Actions, Route Handlers
+3. **API / Middleware** (`#d0bfff`, 20%) — tRPC, auth, validation
+4. **ORM** (`#c3fae8`, 20%) — Prisma queries, transactions
+5. **Storage / External** (`#ffd8a8`, 20%) — PostgreSQL, third-party APIs
+
+Rules:
+- ≤ 5 nodes per row — collapse similar steps into one
+- Request arrows: solid, labeled (e.g. `"HTTP POST /api/trpc"`, `"prisma.user.findMany()"`)
+- Response arrows: `strokeStyle: "dashed"`, labeled with return value type
+- Show happy path only; omit error branches
+- Zone row label (large bold text) pinned to the left edge of each row
 
 ---
 
 ### Diagram C: System Architecture
 
-**Purpose:** High-level birds-eye view of the entire system.
+**Goal**: Bird's-eye view of the entire system.
 
-#### Pre-step: Component Drift Check
+#### Drift Check (skip if unchanged)
 
-Run this before every architecture diagram regeneration — skip drawing if nothing changed.
+1. `Glob src/components/*.tsx` — collect component basenames
+2. If `docs/diagrams/architecture.excalidraw` exists, read it; join all `type:"text"` element values
+3. Every component name present → print `Architecture diagram is up to date — skipping` and stop
+4. Otherwise regenerate
 
-1. **List top-level components** — glob `src/components/*.tsx` (direct children only, skip subdirectories like `figma/`)
-2. **Read the existing diagram** — if `docs/diagrams/architecture.excalidraw` exists, read it and join all `text` values from `type:"text"` elements into one big string
-3. **Check coverage** — for each component basename (filename without `.tsx`), check if it appears anywhere in that combined string
-4. **Decide**:
-   - All components present → print `Architecture diagram is up to date — skipping` and **stop here for Diagram C** (no `create_view`, no file write)
-   - Any component is missing → print `New components detected: [name, ...]` and proceed with regeneration below
-   - File doesn't exist yet → always generate
+#### Layout
 
-#### Layout approach (when regenerating)
-
-- Layered zones: Browser Runtime → UI Components → Static Data Layer
-- Show external services on the side (if applicable)
-- Highlight type-safety or contract boundaries where present
+**Pattern**: Zone layout — translucent layer zones (Browser → UI → Server → DB), fan-out flows between zones. Place external services (auth, billing, DB) on the right. Highlight type-safety/contract boundaries.
 
 ---
 
-## Step 4: Save Diagram Data
+## Step 4: Save Diagrams
 
-After rendering each diagram inline with the Excalidraw tool,
-save the element JSON for all diagrams that were generated or updated.
+Write element JSON to `docs/diagrams/`:
+- `structure.excalidraw`, `dataflow.excalidraw`, `architecture.excalidraw`
 
-Write to `docs/diagrams/`:
-
-- `structure.excalidraw` (if structure was generated)
-- `dataflow.excalidraw` (if dataflow was generated)
-- `architecture.excalidraw` (if architecture was generated)
+Only write files for diagrams generated this run.
 
 ---
 
 ## Step 5: Export SVGs
 
-For each diagram that was generated or updated in this run, export it to SVG.
-
-Write `docs/diagrams/_gen-svg.mjs` with the following content, setting `DIAGRAMS` to only
-include the diagrams that were actually regenerated:
+Write, run, then delete this script:
 
 ```js
-import { readFileSync, writeFileSync, existsSync } from "fs";
-
-const DIAGRAMS = [
-  { input: "docs/diagrams/structure.excalidraw",    output: "docs/diagrams/structure.svg"    },
-  { input: "docs/diagrams/dataflow.excalidraw",     output: "docs/diagrams/dataflow.svg"     },
-  { input: "docs/diagrams/architecture.excalidraw", output: "docs/diagrams/architecture.svg" },
-];
-
-function esc(s) {
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+// docs/diagrams/_gen-svg.mjs
+import{readFileSync,writeFileSync,existsSync}from"fs";
+const D=[["docs/diagrams/structure.excalidraw","docs/diagrams/structure.svg"],["docs/diagrams/dataflow.excalidraw","docs/diagrams/dataflow.svg"],["docs/diagrams/architecture.excalidraw","docs/diagrams/architecture.svg"]];
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const f=n=>+n.toFixed(2);
+function toSvg(path){
+  const E=JSON.parse(readFileSync(path,"utf-8")).elements.filter(e=>e.type!=="cameraUpdate");
+  let[mx,my,Mx,My]=[Infinity,Infinity,-Infinity,-Infinity];
+  for(const e of E){
+    if(e.x==null)continue;
+    mx=Math.min(mx,e.x);my=Math.min(my,e.y);
+    Mx=Math.max(Mx,e.x+(e.width??0));My=Math.max(My,e.y+(e.height??0));
+    if(e.type==="arrow"&&e.points)for(const[px,py]of e.points){Mx=Math.max(Mx,e.x+px);My=Math.max(My,e.y+py);}
+  }
+  const pad=32,W=Math.ceil(Mx-mx+2*pad),H=Math.ceil(My-my+2*pad),ox=-mx+pad,oy=-my+pad;
+  let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="font-family:Virgil,'Segoe UI',system-ui,-apple-system,sans-serif;">\n<defs><marker id="ah" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#555"/></marker><filter id="shadow" x="-5%" y="-5%" width="115%" height="115%"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000018"/></filter></defs>\n<rect width="${W}" height="${H}" fill="#f8f9fa" rx="4"/>\n`;
+  for(const e of E.filter(e=>e.type==="rectangle").sort((a,b)=>b.width*b.height-a.width*a.height)){
+    const op=f((e.opacity??100)/100),z=e.opacity!=null&&e.opacity<=30;
+    s+=`<rect x="${f(e.x+ox)}" y="${f(e.y+oy)}" width="${e.width}" height="${e.height}" rx="${e.roundness?10:0}" ${z?"":`filter="url(#shadow)"`} fill="${e.backgroundColor??"none"}" fill-opacity="${op}" stroke="${e.strokeColor??"#aaa"}" stroke-width="${z?1.5:2}"/>\n`;
+  }
+  for(const e of E.filter(e=>e.type==="ellipse")){
+    const cx=f(e.x+ox+e.width/2),cy=f(e.y+oy+e.height/2),op=f((e.opacity??100)/100);
+    s+=`<ellipse cx="${cx}" cy="${cy}" rx="${e.width/2}" ry="${e.height/2}" fill="${e.backgroundColor??"none"}" fill-opacity="${op}" stroke="${e.strokeColor??"#aaa"}" stroke-width="2"/>\n`;
+  }
+  for(const e of E.filter(e=>e.type==="diamond")){
+    const cx=f(e.x+ox+e.width/2),cy=f(e.y+oy+e.height/2),op=f((e.opacity??100)/100);
+    s+=`<polygon points="${f(cx)},${f(e.y+oy)} ${f(e.x+ox+e.width)},${cy} ${f(cx)},${f(e.y+oy+e.height)} ${f(e.x+ox)},${cy}" fill="${e.backgroundColor??"none"}" fill-opacity="${op}" stroke="${e.strokeColor??"#aaa"}" stroke-width="2"/>\n`;
+  }
+  for(const e of E.filter(e=>e.type==="line")){
+    if(!e.points||e.points.length<2)continue;
+    s+=`<polyline points="${e.points.map(([px,py])=>`${f(e.x+ox+px)},${f(e.y+oy+py)}`).join(" ")}" fill="none" stroke="${e.strokeColor??"#aaa"}" stroke-width="${e.strokeWidth??1}" stroke-dasharray="${e.strokeStyle==="dashed"?"6,3":""}"/>\n`;
+  }
+  for(const e of E.filter(e=>e.type==="text")){
+    const ls=e.text.split("\n"),fs=e.fontSize??14,lh=f(fs*1.4),cx=f(e.x+ox+(e.width??0)/2),sy=f(e.y+oy+fs*0.9);
+    s+=`<text text-anchor="middle" fill="${e.strokeColor??"#333"}" font-size="${fs}" font-weight="${fs>=18?"700":fs>=14?"600":"400"}" font-family="inherit">\n`;
+    ls.forEach((l,i)=>s+=i===0?`  <tspan x="${cx}" y="${sy}">${esc(l.trim()||" ")}</tspan>\n`:`  <tspan x="${cx}" dy="${lh}">${esc(l.trim()||" ")}</tspan>\n`);
+    s+=`</text>\n`;
+  }
+  for(const e of E.filter(e=>e.type==="arrow")){
+    if(!e.points||e.points.length<2)continue;
+    s+=`<polyline points="${e.points.map(([px,py])=>`${f(e.x+ox+px)},${f(e.y+oy+py)}`).join(" ")}" fill="none" stroke="${e.strokeColor??"#555"}" stroke-width="${e.strokeWidth??2}" marker-end="url(#ah)"/>\n`;
+  }
+  return s+`</svg>`;
 }
-
-function toSvg(path) {
-  const data = JSON.parse(readFileSync(path, "utf-8"));
-  const els = data.elements.filter((e) => e.type !== "cameraUpdate");
-
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  for (const el of els) {
-    if (el.x == null) continue;
-    minX = Math.min(minX, el.x);
-    minY = Math.min(minY, el.y);
-    maxX = Math.max(maxX, el.x + (el.width ?? 0));
-    maxY = Math.max(maxY, el.y + (el.height ?? 0));
-    if (el.type === "arrow" && el.points)
-      for (const [px, py] of el.points) {
-        maxX = Math.max(maxX, el.x + px);
-        maxY = Math.max(maxY, el.y + py);
-      }
-  }
-
-  const pad = 32, W = Math.ceil(maxX - minX + 2 * pad), H = Math.ceil(maxY - minY + 2 * pad);
-  const ox = -minX + pad, oy = -minY + pad, f = (n) => +n.toFixed(2);
-
-  // Sort rects largest-first so zone backgrounds render behind cards
-  const rects  = els.filter((e) => e.type === "rectangle").sort((a, b) => b.width * b.height - a.width * a.height);
-  const texts  = els.filter((e) => e.type === "text");
-  const arrows = els.filter((e) => e.type === "arrow");
-
-  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="font-family: ui-rounded, 'Hiragino Maru Gothic ProN', Quicksand, Comfortaa, Manjari, 'Arial Rounded MT Bold', Calibri, source-sans-pro, sans-serif;">\n`;
-  svg += `<defs>\n`;
-  svg += `  <marker id="ah" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#555"/></marker>\n`;
-  svg += `  <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">\n`;
-  svg += `    <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000018"/>\n`;
-  svg += `  </filter>\n`;
-  svg += `</defs>\n`;
-  svg += `<rect width="${W}" height="${H}" fill="#f8f9fa" rx="4"/>\n`;
-
-  for (const el of rects) {
-    const op = f((el.opacity ?? 100) / 100);
-    const isZone = el.opacity != null && el.opacity <= 30;
-    const rx = el.roundness ? 10 : 0;
-    const filter = isZone ? "" : ` filter="url(#shadow)"`;
-    svg += `<rect x="${f(el.x + ox)}" y="${f(el.y + oy)}" width="${el.width}" height="${el.height}" rx="${rx}"${filter} fill="${el.backgroundColor ?? "none"}" fill-opacity="${op}" stroke="${el.strokeColor ?? "#aaa"}" stroke-width="${isZone ? 1.5 : 2}"/>\n`;
-  }
-
-  for (const el of texts) {
-    const lines = el.text.split("\n"), fs = el.fontSize ?? 14, lh = f(fs * 1.4);
-    const cx = f(el.x + ox + (el.width ?? 0) / 2);
-    const startY = f(el.y + oy + fs * 0.9);
-    const weight = fs >= 18 ? "700" : fs >= 14 ? "600" : "400";
-    svg += `<text text-anchor="middle" fill="${el.strokeColor ?? "#333"}" font-size="${fs}" font-weight="${weight}" font-family="inherit">\n`;
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim() || " ";
-      svg += i === 0
-        ? `  <tspan x="${cx}" y="${startY}">${esc(line)}</tspan>\n`
-        : `  <tspan x="${cx}" dy="${lh}">${esc(line)}</tspan>\n`;
-    }
-    svg += `</text>\n`;
-  }
-
-  for (const el of arrows) {
-    if (!el.points || el.points.length < 2) continue;
-    const pts = el.points
-      .map(([px, py]) => `${f(el.x + ox + px)},${f(el.y + oy + py)}`)
-      .join(" ");
-    svg += `<polyline points="${pts}" fill="none" stroke="${el.strokeColor ?? "#555"}" stroke-width="${el.strokeWidth ?? 2}" marker-end="url(#ah)"/>\n`;
-  }
-
-  return svg + `</svg>`;
-}
-
-for (const { input, output } of DIAGRAMS) {
-  if (!existsSync(input)) { console.log(`Skip: ${input}`); continue; }
-  writeFileSync(output, toSvg(input), "utf-8");
-  console.log(`✓ ${output}`);
+for(const[i,o]of D){
+  if(!existsSync(i)){console.log(`Skip: ${i}`);continue;}
+  writeFileSync(o,toSvg(i),"utf-8");
+  console.log(`✓ ${o}`);
 }
 ```
-
-Run the script, then delete it:
 
 ```bash
 bun docs/diagrams/_gen-svg.mjs || node docs/diagrams/_gen-svg.mjs
@@ -293,33 +222,25 @@ rm docs/diagrams/_gen-svg.mjs
 
 ## Step 6: Update README.md
 
-Find the existing `## Architecture` section in `README.md` (or append it before the last `##` section if absent) and ensure it contains exactly:
+Find or create an `## Architecture` section:
 
 ```markdown
 ## Architecture
 
 ### Folder Structure
-
 ![Folder Structure](docs/diagrams/structure.svg)
 
 ### Data Flow
-
 ![Data Flow](docs/diagrams/dataflow.svg)
 
 ### System Architecture
-
 ![System Architecture](docs/diagrams/architecture.svg)
 ```
 
-Only update the image lines for diagrams that were regenerated in this run. Leave other lines untouched.
+Only update image lines for diagrams regenerated this run.
 
 ---
 
 ## Step 7: Summary
 
-After completing all steps, report:
-
-- Which diagrams were generated (or skipped due to drift check)
-- File paths saved to `docs/diagrams/`
-- A one-line description of what each diagram shows
-- Any parts of the architecture that were unclear or assumed
+Report: which diagrams generated/skipped, file paths, one-line description per diagram, visual pattern used, any unclear or assumed parts.
