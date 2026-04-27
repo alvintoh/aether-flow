@@ -35,6 +35,44 @@ whether to split.
 
 ---
 
+## Step 2b: Check folder conventions
+
+Scan the staged files against the folder conventions in `CLAUDE.md` before deciding on commit structure.
+
+```bash
+git diff --cached --name-only
+```
+
+Check each staged `src/` file against these rules:
+
+| Rule | Violation example |
+|---|---|
+| `src/app/` files must be Next.js reserved names only (`page`, `layout`, `error`, `loading`, `not-found`, `template`, `default`, `route`) | `src/app/(dashboard)/WorkflowCard.tsx` |
+| Custom hooks (`useX.ts/tsx`) must be in `src/hooks/` or `src/features/*/hooks/` | `src/lib/useWorkflow.ts` |
+| `src/components/ui/` is shadcn only — never hand-create files here | `src/components/ui/CustomCard.tsx` |
+| `src/generated/` files must never be manually staged | `src/generated/prisma/anything` |
+| Shared utilities belong in `src/lib/` — not loose in `src/` root | `src/formatDate.ts` |
+| tRPC routers belong in `src/trpc/routers/` | `src/lib/workflowRouter.ts` |
+| Inngest functions belong in `src/inngest/` | `src/lib/myJob.ts` |
+| Feature-specific code belongs in `src/features/[feature]/` not in `src/components/` | `src/components/WorkflowCard.tsx` |
+
+If violations are found, surface them before proceeding:
+
+```
+⚠️  Folder convention warnings:
+  src/app/(dashboard)/WorkflowCard.tsx — components don't belong in src/app/, move to src/features/workflows/components/
+  src/lib/useWorkflow.ts — hook files must be in src/hooks/ or src/features/*/hooks/
+
+Fix before committing? (f)ix / (i)gnore and continue
+```
+
+- **(f)ix** — stop here, let the user move the files, do not proceed
+- **(i)gnore** — continue to Step 3 with the violations noted
+
+If no violations, continue silently.
+
+---
+
 ## Step 3: Decide — single commit or split?
 
 A commit should represent **one logical change**. Analyse the staged diff and
