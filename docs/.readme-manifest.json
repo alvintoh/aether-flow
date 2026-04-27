@@ -1,0 +1,30 @@
+{
+  "project": "aether-flow",
+  "assembled": "2026-04-27T00:00:00.000Z",
+  "sections": {
+    "getting-started": {
+      "hash": "de2d3c6fb570b2de1baff95860b24183a71efbd2",
+      "files": ["package.json"]
+    },
+    "architecture": {
+      "hash": "7c83a36bbad1cd2f2c907af4a803435b455901fe",
+      "files": ["src/app/", "src/components/", "src/features/"]
+    },
+    "data-contracts": {
+      "hash": "7c83a36bbad1cd2f2c907af4a803435b455901fe",
+      "files": ["prisma/"]
+    },
+    "design-system": {
+      "hash": "5e3a24bf823bbed2b8ed77fb00114f467a1b630a",
+      "files": ["src/app/globals.css", "src/components/"]
+    },
+    "deployment": {
+      "hash": "745e981c3b894ffd115c69bab6e3adcf6346a862",
+      "files": [".github/workflows/", "package.json"]
+    },
+    "roadmap": {
+      "hash": "7c83a36bbad1cd2f2c907af4a803435b455901fe",
+      "files": ["src/app/", "src/components/", "src/features/"]
+    }
+  }
+}

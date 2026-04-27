@@ -20,6 +20,11 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Generate Prisma client
+        run: bun --bun run prisma generate
+        env:
+          DATABASE_URL: postgresql://localhost/ci
+
       - name: Typecheck
         run: bunx tsc --noEmit
 
