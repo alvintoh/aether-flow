@@ -10,23 +10,15 @@ import { LogoutButton } from "./logout";
 
 export default function Page() {
   const trpc = useTRPC();
-  const { data } = useQuery(trpc.getWorkflows.queryOptions());
+  const { data } = useQuery(trpc.workflows.getMany.queryOptions());
 
-  const testAI = useMutation(
-    trpc.testAI.mutationOptions({
+  const create = useMutation(
+    trpc.workflows.create.mutationOptions({
       onSuccess: () => {
-        toast.success("AI Job queued");
+        toast.success("Workflow created");
       },
       onError: (error) => {
         toast.error(`Error: ${error.message}`);
-      },
-    }),
-  );
-
-  const create = useMutation(
-    trpc.createWorkflow.mutationOptions({
-      onSuccess: () => {
-        toast.success("Job queued");
       },
     }),
   );
@@ -35,9 +27,6 @@ export default function Page() {
     <div className="min-h-screen min-w-screen flex items-center justify-center flex-col gap-y-6">
       protected server component
       <div>{JSON.stringify(data, null, 2)}</div>
-      <Button disabled={testAI.isPending} onClick={() => testAI.mutate()}>
-        Test AI
-      </Button>
       <Button disabled={create.isPending} onClick={() => create.mutate()}>
         Create workflow
       </Button>
