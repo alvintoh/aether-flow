@@ -1,0 +1,9 @@
+pre-commit:
+  parallel: true
+  commands:
+    typecheck:
+      glob: "src/**/*.{ts,tsx}"
+      run: bunx tsc --noEmit
+
+    structure-check:
+      run: bash .lefthook/structure-check.sh
