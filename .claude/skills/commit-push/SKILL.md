@@ -1,12 +1,12 @@
 ---
-name: commit-review
-description: Use when you want Claude to stage all changes, review them, and suggest a commit message before you decide whether to commit and push. Automatically splits large multi-concern changes into separate focused commits.
+name: commit-push
+description: Use when you want Claude to stage all changes, review them, suggest commit messages, and push directly to the current branch — no PR. Automatically splits large multi-concern changes into separate focused commits.
 ---
 
-# Commit Review
+# Commit Push
 
-Stage all changes, analyse them, and either propose a single commit message or
-split into multiple focused commits — one per logical concern.
+Stage all changes, analyse them, commit (single or split), and push directly
+to the current branch — no pull request.
 
 ---
 
@@ -140,17 +140,10 @@ Show the full plan upfront before doing anything:
 Changes span N concerns — suggesting split into N commits:
 
   Commit 1 of N · chore(tooling): replace Biome with oxlint + oxfmt
-  Files: package.json, bun.lock, .oxlintrc.json, .oxfmtrc.json, biome.json,
-         .vscode/settings.json
+  Files: package.json, bun.lock, .oxlintrc.json
 
-  Commit 2 of N · style: reformat all source files with oxfmt
-  Files: src/components/ui/* (52 files), src/app/* (8 files)
-
-  Commit 3 of N · chore(claude): add arch-add, arch-replace, docs-assemble skills
-  Files: .claude/skills/*, .claude/agents/*
-
-  Commit 4 of N · docs: replace boilerplate README and update CLAUDE.md
-  Files: README.md, CLAUDE.md
+  Commit 2 of N · chore(claude): add commit-push and commit-pr skills
+  Files: .claude/skills/*
 
 Proceed with this split? (y)es / (e)dit plan / (n)o — commit everything together
 ```
@@ -184,9 +177,7 @@ After the final commit, print a summary:
 ```
 All N commits created:
   ae1f3b2 · chore(tooling): replace Biome with oxlint + oxfmt
-  c9d2a41 · style: reformat all source files with oxfmt
-  8f3e1bc · chore(claude): add arch-add, arch-replace, docs-assemble skills
-  1a2b3c4 · docs: replace boilerplate README and update CLAUDE.md
+  c9d2a41 · chore(claude): add commit-push and commit-pr skills
 ```
 
 ---

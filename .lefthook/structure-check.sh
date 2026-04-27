@@ -1,5 +1,6 @@
 #!/bin/bash
 # Checks staged files against folder conventions defined in CLAUDE.md.
+# Mirrors the convention checks in /commit-push and /commit-pr skills.
 # Hard blocks: src/generated/ staged manually.
 # Soft warnings: everything else — prints violations, exits 0.
 
