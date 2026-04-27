@@ -270,6 +270,38 @@ After the PR is created, print the PR URL.
 
 ---
 
+## Step 8: Ensure branch protection on `main`
+
+After the PR is created, silently check whether branch protection is already configured:
+
+```bash
+gh api repos/{owner}/{repo}/branches/main/protection --jq '.required_status_checks.contexts' 2>/dev/null
+```
+
+Derive `{owner}` and `{repo}` from the remote URL:
+
+```bash
+gh repo view --json nameWithOwner --jq '.nameWithOwner'
+```
+
+**If the check `"Typecheck · Lint · Format"` is already present** — do nothing, print nothing.
+
+**If branch protection is missing or the check is not listed** — apply it silently then print one line:
+
+```bash
+echo '{"required_status_checks":{"strict":true,"contexts":["Typecheck · Lint · Format"]},"enforce_admins":false,"required_pull_request_reviews":null,"restrictions":null}' \
+  | gh api -X PUT repos/{owner}/{repo}/branches/main/protection --input -
+```
+
+Print:
+```
+Branch protection set: main now requires CI to pass before merge.
+```
+
+This step is idempotent — running it multiple times is safe.
+
+---
+
 ## Single-Letter Commands
 
 | Prompt | Full word | Shorthand |
