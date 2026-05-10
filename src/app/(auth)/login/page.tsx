@@ -17,8 +17,8 @@ export default async function Page() {
           <Image
             src="/logos/logo.svg"
             alt="Aether Flow"
-            width={30}
-            height={30}
+            width={78}
+            height={32}
           />
           Aether Flow
         </Link>

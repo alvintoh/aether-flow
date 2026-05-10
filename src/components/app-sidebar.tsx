@@ -64,8 +64,8 @@ export default function AppSidebar() {
               <Image
                 src="/logos/logo.svg"
                 alt="AetherFlow"
-                width={30}
-                height={30}
+                width={78}
+                height={32}
               />
               <span className="font-semibold text-sm">AetherFlow</span>
             </Link>
