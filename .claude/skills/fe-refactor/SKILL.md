@@ -3,8 +3,9 @@ name: fe-refactor
 description: >
   Refactor a frontend area for structure, readability, and maintainability — no
   behaviour changes. Takes an optional target (component, directory, or concern).
-  Reads only the scoped area, plans before touching anything, confirms if scope
-  is large, then applies changes and verifies with lint and typecheck.
+  Grep-first to find issues before reading full files, plans before touching anything,
+  confirms if scope is large, then applies changes, verifies with lint and typecheck,
+  and confirms no runtime regressions via Chrome MCP.
 argument-hint: "<component | directory | concern>"
 ---
 
@@ -22,23 +23,36 @@ requires it.
 
 ---
 
-## Step 1 — Scope the work
+## Step 1 — Scope the work (Grep before you Read)
 
-**Identify the target area.** Do not read the entire codebase — read only what is in scope:
+Do not read full files speculatively. Use targeted searches to find what has issues,
+then read only those files.
 
-- If a component name is given → Grep for it, then read the file and its direct imports
-- If a directory is given → Glob `src/<dir>/**/*.{ts,tsx}`, read every file returned
-- If a concern is given (e.g. "too many useEffects", "duplicated fetch logic") → Grep for
-  the relevant pattern first, then read only the matching files
+**If a component name is given:**
+- Grep for the name to find its file path, then read that file + its direct imports
 
-Stop expanding scope when you have enough to identify the structural problems.
+**If a directory is given:**
+- Glob `src/<dir>/**/*.{ts,tsx}` with `head_limit: 30` to see the file list
+- Grep for problem patterns in that directory before deciding which files to read fully
+
+**If a concern is given**, search for the relevant pattern first:
+
+| Concern | Grep pattern |
+|---|---|
+| Too many `useEffect`s | `useEffect` across `src/features/**/*.{ts,tsx}` |
+| Client boundary sprawl | `"use client"` across `src/` |
+| Duplicated fetch logic | `useQuery\|useSuspenseQuery` across `src/features/` |
+| Inline JSX functions | `=>\s*{` or `onChange={\(` in JSX files |
+| Multiple `useState` | `useState` with `count` mode per file |
+
+Read only the files where the Grep confirms an issue exists. Stop expanding scope when
+you have enough to identify the structural problems.
 
 ---
 
 ## Step 2 — Identify refactor opportunities
 
-Evaluate the scoped files against these criteria. Only flag issues that are in scope —
-do not audit the whole project.
+Evaluate only the scoped files against these criteria — do not audit the whole project.
 
 **Component structure**
 - Single-responsibility: does each component do one thing?
@@ -109,19 +123,34 @@ Apply changes in the order listed in the plan. For each change:
 
 ---
 
-## Step 5 — Verify
+## Step 5 — Verify statically
 
 ```bash
 bun lint
-bun typecheck
+bunx tsc --noEmit
 ```
 
-Fix all errors before reporting. The refactor must not break the type system or introduce
+Fix all errors before proceeding. The refactor must not break the type system or introduce
 lint violations. Do not use `// @ts-ignore` or `// eslint-disable` to suppress errors.
 
 ---
 
-## Step 6 — Report
+## Step 6 — Verify in the browser with Chrome MCP
+
+Navigate to the page(s) affected by the refactor and confirm no regressions:
+
+```
+mcp__claude_in_chrome__navigate_page        — reload the affected route
+mcp__claude_in_chrome__get_console_logs     — no new errors or warnings vs before the refactor
+mcp__claude_in_chrome__get_network_requests — no new failed requests
+```
+
+The page must render correctly — the refactor must be behaviour-transparent.
+If any runtime regressions appear, fix them before reporting done.
+
+---
+
+## Step 7 — Report
 
 ```
 Refactor complete — <target>
@@ -132,7 +161,7 @@ Changes:
 - src/app/(dashboard)/workflows/page.tsx — pushed "use client" down to WorkflowActions
 
 Behaviour unchanged: same props, same render output, same exported types.
-Verified: lint ✓  typecheck ✓
+Verified: lint ✓  typecheck ✓  Chrome console clean ✓
 ```
 
 If any bugs or non-refactor improvements were spotted, list them under **Also noticed**

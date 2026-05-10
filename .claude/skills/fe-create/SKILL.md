@@ -3,7 +3,8 @@ name: fe-create
 description: >
   Scaffold and build a new frontend feature for this Next.js portfolio.
   Reads existing data files and component patterns first, builds following
-  project conventions, then runs lint and typecheck to verify correctness.
+  project conventions, verifies with lint and typecheck, then uses Chrome MCP
+  to confirm zero console errors in the browser.
   Use when the user says "create X", "add X feature", "build X", or "I want X on the site".
 argument-hint: "<feature-description>"
 ---
@@ -20,36 +21,33 @@ Follow existing project patterns precisely — do not introduce new conventions.
 
 ---
 
-## Step 1 — Understand the project
+## Step 1 — Understand the page structure
 
-Read these files before writing a single line of code:
+Read only these three files — they give the full layout and token picture:
 
 ```
-src/app/page.tsx          — current page structure and section layout
-src/app/layout.tsx        — root layout, metadata, global wrappers
-src/app/globals.css       — theme tokens (colours, spacing, custom utilities)
+src/app/page.tsx        — section layout and component composition
+src/app/layout.tsx      — root layout, metadata, global wrappers
+src/app/globals.css     — theme tokens (colours, spacing, custom utilities)
 ```
 
-Extract:
-- Which sections exist and how they are structured
-- What theme tokens are available (`--background`, `--foreground`, `--accent`, etc.)
-- How components are imported and composed in the page
+Note which sections exist, what theme tokens are available, and how components are composed.
 
 ---
 
-## Step 2 — Read existing data and components
+## Step 2 — Sample existing patterns (targeted, not exhaustive)
 
-Use Glob to discover — do not assume file names:
+Do **not** read every component. Instead:
 
-- Pattern `src/data/*.ts` — read every data file to understand shape and naming
-- Pattern `src/components/**/*.tsx` — read every component to understand patterns
+1. Glob `src/components/**/*.tsx` and `src/data/*.ts` to see what exists
+2. Read the **2–3 most relevant files** — pick the ones closest to the feature you're building
+3. For specific patterns, use targeted Grep instead of full reads:
+   - `"use client"` usage: `Grep pattern='"use client"' glob='src/components/**/*.tsx'`
+   - Image usage: `Grep pattern='next/image' glob='src/**/*.tsx'`
+   - Data file shape: read only the data file that matches the feature domain
 
-From the components, note:
-- How props are typed (inline `type Props`, exported type, or none)
-- Whether `"use client"` is used and why
-- How Tailwind classes are applied (className strings, conditional logic)
-- How `next/image` and `next/link` are used
-- Any shared layout or spacing conventions
+Stop reading once you can answer: how are props typed, how is Tailwind applied, what
+spacing/layout conventions are in use.
 
 ---
 
@@ -94,7 +92,7 @@ Follow these conventions exactly:
 - New data → `src/data/<feature-name>-data.ts`
 - No barrel files (`index.ts`) — import directly from the file
 
-**Import ordering** (ESLint enforced — alphabetical, grouped)
+**Import ordering** (linter enforced — alphabetical, grouped)
 ```
 1. builtin
 2. external  (react, next/*, lucide-react, etc.)
@@ -104,21 +102,35 @@ Follow these conventions exactly:
 
 ---
 
-## Step 5 — Verify
+## Step 5 — Verify statically
 
 Run both checks and fix all errors before reporting done:
 
 ```bash
 bun lint
-bun typecheck
+bunx tsc --noEmit
 ```
 
-If lint reports import ordering violations, fix them.
-If typecheck reports errors, resolve them — do not use `// @ts-ignore`.
+Fix all lint errors. Resolve all type errors — do not use `// @ts-ignore`.
 
 ---
 
-## Step 6 — Report
+## Step 6 — Verify in the browser
+
+Navigate to the page that contains the new feature and check:
+
+```
+mcp__claude_in_chrome__navigate_page        — go to the route containing the new feature
+mcp__claude_in_chrome__get_console_logs     — must be zero errors or warnings
+mcp__claude_in_chrome__get_network_requests — no failed tRPC calls or image loads
+mcp__claude_in_chrome__take_screenshot      — confirm the feature renders visually
+```
+
+If console errors appear, diagnose and fix before reporting done.
+
+---
+
+## Step 7 — Report
 
 Summarise what was built:
 
@@ -126,3 +138,4 @@ Summarise what was built:
 - Where the feature appears in the page
 - Any assumptions made (e.g. placeholder data used, image path assumed)
 - Any follow-up the user should handle (e.g. swap placeholder image, add real data)
+- **Verified**: lint ✓  typecheck ✓  Chrome console clean ✓

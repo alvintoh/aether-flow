@@ -1,82 +1,155 @@
 ---
 name: fe-review
-description: Review all frontend components in src/app/ against TypeScript, React, Next.js App Router, performance, accessibility, and security best practices. Runs lint and typecheck first, then returns a prioritised findings list.
+description: Review all frontend components in src/app/ and src/features/ against TypeScript, React, Next.js App Router, performance, accessibility, and security best practices. Captures Chrome console errors first, runs lint and typecheck, then Grep-first pattern matching before reading files — returns a prioritised findings list.
 ---
 
-You are running a structured frontend code review of this Next.js + TypeScript + Tailwind portfolio.
+# Frontend Code Review
 
-## Step 1 — Automated checks
+Structured frontend review of this Next.js + TypeScript + Tailwind project.
+Use Grep to find anti-patterns first — read a file only when Grep confirms an issue.
+This keeps the review fast and focused on real problems.
 
-Run the following commands and note any errors or warnings:
+---
+
+## Step 1 — Live runtime signal (Chrome MCP)
+
+Before any static analysis, capture what the browser is actually reporting:
+
+```
+mcp__claude_in_chrome__get_console_logs     — errors, warnings, uncaught exceptions
+mcp__claude_in_chrome__get_network_requests — failed requests (tRPC errors, 4xx/5xx, CORS)
+```
+
+Record these as **[RUNTIME]** findings — they are highest priority because they affect users
+right now. If Chrome MCP is not connected, note that runtime errors could not be verified.
+
+---
+
+## Step 2 — Automated static checks
 
 ```bash
 bun lint
-bun typecheck
+bunx tsc --noEmit
 ```
 
-## Step 2 — Discover and read all component files
+Record all errors and warnings as **[LINT]** or **[TYPE]** findings.
 
-Use Glob to discover files rather than relying on a fixed list:
+---
 
-- Pattern `src/components/**/*.tsx` — all components
-- Pattern `src/app/page.tsx` and `src/app/layout.tsx` — app entry points
-- Pattern `src/data/*.ts` — all data files
+## Step 3 — Grep-first pattern review
 
-Read every file returned by these globs.
+Search for anti-patterns across the codebase **before reading any file in full**.
+For each pattern, collect the matching file paths. Only read a file if it matches.
 
-## Step 3 — Review against these criteria
+**Client boundary**
+```
+Grep: "use client"  glob: src/**/*.{ts,tsx}   → flag files using it unnecessarily
+```
+For each match, read the file to check: does it actually use hooks, event handlers, or
+browser APIs? If not, flag it as an unnecessary `"use client"`.
+
+**`any` usage**
+```
+Grep: ": any|as any|<any"  glob: src/**/*.{ts,tsx}  output: files_with_matches
+```
+Read only the matching files to confirm the `any` is not in a comment or generated code.
+
+**Inline object/array/function in JSX props**
+```
+Grep: "=\{\{|=\{\[|=\{(" glob: src/**/*.tsx  output: files_with_matches
+```
+Read matches and confirm they are genuinely inline (not variable references).
+
+**`useEffect` for derived state**
+```
+Grep: "useEffect" glob: src/features/**/*.{ts,tsx}  output: files_with_matches
+```
+Read matches and check if any `useEffect` sets state that could be computed during render.
+
+**Missing `alt` on images**
+```
+Grep: "<img " glob: src/**/*.tsx  output: files_with_matches
+```
+Read matches and confirm `alt` is present.
+
+**`dangerouslySetInnerHTML`**
+```
+Grep: "dangerouslySetInnerHTML" glob: src/**/*.tsx  output: files_with_matches
+```
+Flag all matches — always requires review.
+
+**`NEXT_PUBLIC_` secrets**
+```
+Grep: "NEXT_PUBLIC_" glob: src/**/*.{ts,tsx}  output: files_with_matches
+```
+Read matches and confirm none contain sensitive values (tokens, keys, secrets).
+
+**Barrel file imports (tree-shaking risk)**
+```
+Grep: "from.*index" glob: src/**/*.{ts,tsx}  output: files_with_matches
+```
+
+---
+
+## Step 4 — Targeted file reads
+
+After Step 3, read these specific files (they always need a human eye and Grep can't
+fully capture their issues):
+
+- `src/app/layout.tsx` — metadata, font loading, provider wrapping
+- `src/app/page.tsx` — top-level page structure, section ordering
+- Any `src/trpc/` files flagged by previous steps
+
+Read with `limit` set to avoid loading more than needed from large files.
+
+---
+
+## Step 5 — Compile findings
+
+Group by severity — **[RUNTIME]** > **[TYPE]** > **[LINT]** > **[PATTERN]**:
 
 **TypeScript**
-
-- Prefer `type` over `interface` unless declaration merging is needed
-- Avoid `any` — use `unknown`, generics, or narrowed types
-- Type component props explicitly — never rely on inferred JSX prop types
-- Use `as const` for static data arrays
-- Avoid type assertions (`as Foo`)
+- `any` usage → replace with `unknown` + narrowing
+- Type assertions (`as Foo`) → fix the underlying type
+- Inferred JSX prop types → type explicitly
 
 **React & Hooks**
-
-- Keep components single-responsibility
-- Avoid index keys in lists — use stable, unique IDs
-- Never create objects/arrays/functions inline in JSX props
-- Use `useReducer` for complex local state over multiple `useState` calls
-- Avoid `useEffect` for derived state — compute during render
+- `useEffect` for derived state → compute during render
+- Inline object/array/function in JSX props → hoist or memoize
+- Index keys in lists → use stable IDs
+- Complex multi-`useState` → consolidate with `useReducer`
 
 **Next.js App Router**
-
-- Default to Server Components — `"use client"` only for event handlers, browser APIs, or hooks
-- Push `"use client"` as far down the tree as possible
-- Use `generateMetadata` for SEO — never hardcode `<title>` in JSX
-- Use `next/image` for all images with explicit `width`, `height`, and `alt`
-- Use `next/font` — never load fonts via a `<link>` tag
+- Unnecessary `"use client"` → push boundary down or remove
+- Hardcoded `<title>` in JSX → use `generateMetadata`
+- `<img>` instead of `next/image` → migrate
+- `<link>` for fonts → use `next/font`
 
 **Performance & Bundle**
-
-- Each `"use client"` boundary increases the JS bundle — flag unnecessary ones
-- Avoid barrel files (`index.ts` re-exports) — they prevent tree-shaking
-- Import only what you need — never import entire icon sets
-- Prefer CSS transitions over JS-driven animations for simple effects
+- Barrel file imports → import from source directly
+- Heavy components without `next/dynamic` → lazy-load
 
 **Accessibility**
-
-- Use semantic HTML (`<nav>`, `<main>`, `<section>`, `<button>`) — never `<div>` for interactive elements
-- All interactive elements must be keyboard-navigable with visible focus styles
-- Every `<img>` needs a descriptive `alt`; use `alt=""` only for decorative images
-- Icon-only buttons must have `aria-label`
-- Colour contrast: 4.5:1 for normal text, 3:1 for large text (WCAG AA)
+- `<div>` for interactive elements → use semantic HTML
+- Missing `aria-label` on icon buttons
+- Missing or generic `alt` text on images
+- Colour contrast below 4.5:1
 
 **Security**
+- `dangerouslySetInnerHTML` with unsanitised content
+- `NEXT_PUBLIC_` exposing secrets
+- Unvalidated URLs in `href` props
 
-- Never use `dangerouslySetInnerHTML` with user content
-- Never put secrets in `NEXT_PUBLIC_` env vars
-- Validate URLs in `href` props to prevent `javascript:` injection
+---
 
-## Step 4 — Return findings
+## Step 6 — Return findings
 
-Return a **numbered list of improvements, most impactful first**. For each finding:
+Numbered list, most impactful first. For each finding:
 
-- Short explanation of the issue
-- Which file and line it appears in
+- **Severity** tag: `[RUNTIME]` / `[TYPE]` / `[LINT]` / `[PATTERN]`
+- One-line description of the issue
+- File path and line number
 - Code snippet only if it makes the fix significantly clearer
 
-Include automated check output (lint/typecheck errors) at the top if any were found.
+Include the Chrome MCP runtime errors at the top if any were found. End with a summary
+count: `N issues found — X runtime, Y type/lint, Z pattern`.
