@@ -1,13 +1,17 @@
 "use client";
 
-import { EntityHeader } from "@/components/entity-components";
+import { EntityContainer, EntityHeader } from "@/components/entity-components";
 
 import { useSuspenseWorkflows } from "../hooks/use-workflows";
 
 export const WorkflowsList = () => {
   const workflows = useSuspenseWorkflows();
 
-  return <p>{JSON.stringify(workflows.data, null, 2)}</p>;
+  return (
+    <div className="flex-1 flex justify-center items-center">
+      <p>{JSON.stringify(workflows, null, 2)}</p>
+    </div>
+  );
 };
 
 export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
@@ -20,5 +24,21 @@ export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
       disabled={disabled}
       isCreating={false}
     />
+  );
+};
+
+export const WorkflowsContainer = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  return (
+    <EntityContainer
+      header={<WorkflowsHeader />}
+      search={<></>}
+      pagination={<></>}
+    >
+      {children}
+    </EntityContainer>
   );
 };
