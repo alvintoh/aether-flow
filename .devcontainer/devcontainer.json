@@ -1,0 +1,32 @@
+{
+  "name": "Aether Flow",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "postCreateCommand": "curl -fsSL https://bun.sh/install | bash && $HOME/.bun/bin/bun install && $HOME/.bun/bin/bun --bun run prisma generate",
+  "containerEnv": {
+    "INNGEST_DEV": "1"
+  },
+  "forwardPorts": [3000, 8288],
+  "portsAttributes": {
+    "3000": {
+      "label": "Next.js",
+      "onAutoForward": "openBrowser"
+    },
+    "8288": {
+      "label": "Inngest Dev Server",
+      "onAutoForward": "silent"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Prisma.prisma",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-typescript-next",
+        "oxc.oxc-vscode"
+      ],
+      "settings": {
+        "editor.formatOnSave": true
+      }
+    }
+  }
+}
