@@ -7,6 +7,9 @@
   "containerEnv": {
     "INNGEST_DEV": "1"
   },
+  "remoteEnv": {
+    "BETTER_AUTH_URL": "https://${localEnv:CODESPACE_NAME}-3000.${localEnv:GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
+  },
   "forwardPorts": [3000, 8288],
   "portsAttributes": {
     "3000": {
