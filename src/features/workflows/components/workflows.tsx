@@ -1,6 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { EntityContainer, EntityHeader } from "@/components/entity-components";
+import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
 
 import {
   useCreateWorkflow,
@@ -19,24 +22,32 @@ export const WorkflowsList = () => {
 
 export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
   const createWorkflow = useCreateWorkflow();
+  const router = useRouter();
+  const { handleError, modal } = useUpgradeModal();
 
   const handlerCreate = () => {
     createWorkflow.mutate(undefined, {
+      onSuccess: (data) => {
+        router.push(`/workflows/${data.id}`);
+      },
       onError: (error) => {
-        // TODO: Open upgrade modal
+        handleError(error);
       },
     });
   };
 
   return (
-    <EntityHeader
-      title="Workflows"
-      description="Create and manage your workflows"
-      onNew={handlerCreate}
-      newButtonLabel="New Workflow"
-      disabled={disabled}
-      isCreating={createWorkflow.isPending}
-    />
+    <>
+      {modal}
+      <EntityHeader
+        title="Workflows"
+        description="Create and manage your workflows"
+        onNew={handlerCreate}
+        newButtonLabel="New Workflow"
+        disabled={disabled}
+        isCreating={createWorkflow.isPending}
+      />
+    </>
   );
 };
 
