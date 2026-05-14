@@ -1,7 +1,9 @@
 {
   "name": "Aether Flow",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
-  "postCreateCommand": "curl -fsSL https://bun.sh/install | bash && $HOME/.bun/bin/bun install && $HOME/.bun/bin/bun --bun run prisma generate",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "bun install && bun --bun run prisma generate",
   "containerEnv": {
     "INNGEST_DEV": "1"
   },
