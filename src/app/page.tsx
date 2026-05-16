@@ -10,7 +10,7 @@ import { LogoutButton } from "./logout";
 
 export default function Page() {
   const trpc = useTRPC();
-  const { data } = useQuery(trpc.workflows.getMany.queryOptions());
+  const { data } = useQuery(trpc.workflows.getMany.queryOptions({ page: 1, pageSize: 10, search: "" }));
 
   const create = useMutation(
     trpc.workflows.create.mutationOptions({
