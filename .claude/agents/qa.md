@@ -139,8 +139,4 @@ Total: N findings (C critical, H high, M medium, L low)
 
 If no issues are found in a layer, note it briefly and move on — do not pad the report.
 
-At the end, add a one-line recommendation:
-
-```
-Recommended next step: /qa-issue for the CRITICAL and HIGH findings
-```
+If there are CRITICAL or HIGH findings, note them at the end of the report so the reader knows where to focus first.

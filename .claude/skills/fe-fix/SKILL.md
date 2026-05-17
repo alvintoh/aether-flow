@@ -22,18 +22,30 @@ do not touch them.
 
 ---
 
-## Step 0 — Capture live browser diagnostics
+## Step 0 — Chrome check (UI bugs only)
 
-Before reading any code, pull the live signal from the browser. This gives the exact
-error message, stack trace, and file:line — far more precise than static analysis alone.
+If the task involves a visible UI bug, check Chrome MCP is connected before proceeding:
 
 ```
-mcp__claude_in_chrome__get_console_logs    — errors, warnings, uncaught exceptions
-mcp__claude_in_chrome__get_network_requests — failed requests (4xx/5xx, CORS, tRPC)
+mcp__claude-in-chrome__tabs_context_mcp
 ```
 
-Record the **exact error message** and **file path + line number** from the stack trace.
-If the extension is not connected or returns nothing useful, proceed to Step 1.
+If the call fails or the tool is missing, **stop and ask the user** using AskUserQuestion:
+
+> Chrome MCP isn't connected. How would you like to proceed?
+> - **Restart with Chrome** — exit and relaunch from PowerShell using the `claude` alias (which adds `--chrome` automatically), then run `/fe-fix` again.
+> - **Continue with static analysis only** — skip live diagnostics and rely on lint + typecheck. May miss runtime/visual bugs.
+
+Do NOT silently fall through to static analysis. Wait for the user's choice before proceeding.
+
+If Chrome is connected, capture live diagnostics before reading any code:
+
+```
+mcp__claude-in-chrome__read_console_messages   — errors, warnings, uncaught exceptions
+mcp__claude-in-chrome__read_network_requests   — failed requests (4xx/5xx, CORS, tRPC)
+```
+
+If the task is purely a type error, lint error, or logic bug with no visual component, skip this step and go straight to Step 1.
 
 ---
 

@@ -1,24 +1,24 @@
 ---
-name: qa-issue
+name: gh-issue
 description: >
-  Create a structured GitHub issue from a bug description, QA findings, or live
+  Create a structured GitHub issue from a bug description, stakeholder report, QA findings, or live
   browser errors. Runs lightweight analysis if no input is given. Labels and
   formats the issue, then opens it via `gh issue create`.
   Use when the user says "create an issue", "file a bug", "log this as an issue",
   or after /qa findings.
-argument-hint: "<bug description | QA findings | error message | leave blank for auto-detect>"
+argument-hint: "<bug description | stakeholder report | QA findings | error message | leave blank for auto-detect>"
 ---
 
-# QA Issue
+# GitHub Issue
 
-Package a bug or quality finding into a well-structured GitHub issue and open it
-with `gh issue create`. Keep analysis lightweight — this skill files issues, it
-does not investigate deeply (use the `qa` agent for that).
+Package any bug or quality finding — from QA, a PM, a designer, or a user report — into a
+well-structured GitHub issue and open it with `gh issue create`. Keep analysis lightweight —
+this skill files issues, it does not investigate deeply (use the `qa` agent for that).
 
 ## Arguments
 
-- `/qa-issue <description>` — describe the bug, paste an error, or paste QA findings
-- `/qa-issue` (no args) — auto-detect: pull Chrome console errors and run lint/typecheck
+- `/gh-issue <description>` — describe the bug, paste an error, or paste QA findings
+- `/gh-issue` (no args) — auto-detect: pull Chrome console errors and run lint/typecheck
 
 ---
 
