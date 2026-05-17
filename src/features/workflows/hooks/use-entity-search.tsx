@@ -30,9 +30,10 @@ export function useEntitySearch<T extends { search: string; page: number }>({
     const timer = setTimeout(() => {
       if (localSearch !== params.search) {
         setParams({
+          ...params,
           search: localSearch,
           page: PAGINATION.DEFAULT_PAGE,
-        } as T);
+        });
       }
     }, debounceMs);
 

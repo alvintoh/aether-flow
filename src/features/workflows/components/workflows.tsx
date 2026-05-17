@@ -7,6 +7,8 @@ import {
   EntityHeader,
   EntityPagination,
   EntitySearch,
+  ErrorView,
+  LoadingView,
 } from "@/components/entity-components";
 import { useEntitySearch } from "@/features/workflows/hooks/use-entity-search";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
@@ -35,6 +37,10 @@ export const WorkflowsSearch = () => {
 
 export const WorkflowsList = () => {
   const workflows = useSuspenseWorkflows();
+
+  if (workflows.isFetching) {
+    return <LoadingView />;
+  }
 
   return (
     <div className="flex-1 flex justify-center items-center">
@@ -76,7 +82,7 @@ export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
 
 export const WorkflowsPagination = () => {
   const workflows = useSuspenseWorkflows();
-  const [params, setParams] = useWorkflowsParams();
+  const [, setParams] = useWorkflowsParams();
 
   return (
     <EntityPagination
@@ -102,4 +108,12 @@ export const WorkflowsContainer = ({
       {children}
     </EntityContainer>
   );
+};
+
+export const WorkflowsLoading = () => {
+  return <LoadingView message="Loading workflows..." />;
+};
+
+export const WorkflowsError = () => {
+  return <ErrorView message="Error loading workflows" />;
 };
