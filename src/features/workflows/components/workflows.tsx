@@ -1,11 +1,14 @@
 "use client";
 
+import { formatDistanceToNow } from "date-fns";
+import { WorkflowIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import {
   EmptyStateView,
   EntityContainer,
   EntityHeader,
+  EntityItem,
   EntityList,
   EntityPagination,
   EntitySearch,
@@ -13,10 +16,12 @@ import {
   LoadingView,
 } from "@/components/entity-components";
 import { useEntitySearch } from "@/features/workflows/hooks/use-entity-search";
+import { Workflow } from "@/generated/prisma/browser";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
 
 import {
   useCreateWorkflow,
+  useRemoveWorkflow,
   useSuspenseWorkflows,
 } from "../hooks/use-workflows";
 import { useWorkflowsParams } from "../hooks/use-workflows-params";
@@ -48,7 +53,7 @@ export const WorkflowsList = () => {
     <EntityList
       items={workflows.data?.items || []}
       getKey={(workflow) => workflow.id}
-      renderItem={(workflow) => <p>{workflow.name}</p>}
+      renderItem={(workflow) => <WorkflowItem data={workflow} />}
       emptyView={<WorkflowsEmpty />}
     />
   );
@@ -147,5 +152,33 @@ export const WorkflowsEmpty = () => {
         message="You haven't created any workflows yet. Get started by creating your first workflow."
       />
     </>
+  );
+};
+
+export const WorkflowItem = ({ data }: { data: Workflow }) => {
+  const removeWorkflow = useRemoveWorkflow();
+  const handleRemove = () => {
+    removeWorkflow.mutate({ id: data.id });
+  };
+
+  return (
+    <EntityItem
+      href={`/workflows/${data.id}`}
+      title={data.name}
+      subtitle={
+        <>
+          Updated {formatDistanceToNow(data.updatedAt, { addSuffix: true })}{" "}
+          &bull; Created{" "}
+          {formatDistanceToNow(data.createdAt, { addSuffix: true })}
+        </>
+      }
+      image={
+        <div className="size-8 flex items-center justify-center">
+          <WorkflowIcon className="size-5 text-muted-foreground" />
+        </div>
+      }
+      onRemove={handleRemove}
+      isRemoving={removeWorkflow.isPending}
+    />
   );
 };
