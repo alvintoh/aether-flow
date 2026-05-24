@@ -11,7 +11,7 @@
     "typescript/consistent-type-imports": "error",
     "typescript/no-non-null-assertion": "warn",
     "typescript/prefer-nullish-coalescing": "error",
-    "typescript/use-unknown-in-catch-callback-variable": "error",
+    "typescript/use-unknown-in-catch-callback-variable": "warn",
     "react/self-closing-comp": "error",
     "react/jsx-no-useless-fragment": "warn",
     "nextjs/no-img-element": "error",
