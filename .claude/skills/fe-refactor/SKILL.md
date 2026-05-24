@@ -1,20 +1,24 @@
 ---
 name: fe-refactor
 description: >
-  Refactor a frontend area for structure, readability, and maintainability — no
-  behaviour changes. Takes an optional target (component, directory, or concern).
-  Grep-first to find issues before reading full files, plans before touching anything,
-  confirms if scope is large, then applies changes, verifies with lint and typecheck,
-  and confirms no runtime regressions via Chrome MCP.
+  Refactor a frontend area for structure, readability, maintainability, and code
+  reduction — no behaviour changes. Takes an optional target (component, directory,
+  or concern). Grep-first to find issues before reading full files, plans before
+  touching anything, confirms if scope is large, then applies changes, verifies with
+  lint and typecheck, and confirms no runtime regressions via Chrome MCP.
 argument-hint: "<component | directory | concern>"
 ---
 
 # Frontend Refactor
 
-Improve the structure of existing frontend code without changing behaviour. No new
-features, no bug fixes (unless a structural issue is a direct cause of a bug). Leave
-external APIs, prop shapes, and exported types unchanged unless the refactor explicitly
-requires it.
+Improve the structure and conciseness of existing frontend code without changing
+behaviour. No new features, no bug fixes (unless a structural issue is a direct cause
+of a bug). Leave external APIs, prop shapes, and exported types unchanged unless the
+refactor explicitly requires it.
+
+**Default bias: less code is better.** If two implementations are equivalent, prefer
+the shorter one. Prefer language builtins, concise expressions, and composition over
+verbose custom solutions.
 
 ## Arguments
 
@@ -44,6 +48,9 @@ then read only those files.
 | Duplicated fetch logic | `useQuery\|useSuspenseQuery` across `src/features/` |
 | Inline JSX functions | `=>\s*{` or `onChange={\(` in JSX files |
 | Multiple `useState` | `useState` with `count` mode per file |
+| Verbose null checks | `=== null \|\| === undefined` or `!= null` across `src/` |
+| Dead imports | `no-unused-vars` via `bun lint` output |
+| Over-abstracted one-liners | single-statement functions/hooks used in one place only |
 
 Read only the files where the Grep confirms an issue exists. Stop expanding scope when
 you have enough to identify the structural problems.
@@ -82,6 +89,36 @@ Evaluate only the scoped files against these criteria — do not audit the whole
   → hoist to module scope or memoize with `useMemo`/`useCallback` where measured
 - Heavy imports from barrel files → import directly from source file
 
+**Code reduction — less is more**
+- Dead imports and unused variables → remove (lint flags these)
+- Verbose null/undefined checks → `?.` optional chaining and `??` nullish coalescing
+  ```ts
+  // before
+  const name = user && user.profile && user.profile.name ? user.profile.name : 'Guest';
+  // after
+  const name = user?.profile?.name ?? 'Guest';
+  ```
+- Redundant state that can be derived at render time → remove the `useState`, compute inline
+  ```ts
+  // before
+  const [isValid, setIsValid] = useState(false);
+  useEffect(() => setIsValid(email.includes('@')), [email]);
+  // after
+  const isValid = email.includes('@');
+  ```
+- Over-abstracted single-use extractions → inline them back
+  (a helper used in exactly one place that adds no clarity is pure indirection)
+- Verbose conditional rendering → ternary or `&&` short-circuit
+  ```tsx
+  // before
+  {isLoading ? <Spinner /> : null}
+  // after
+  {isLoading && <Spinner />}
+  ```
+- Manual type shapes that duplicate existing types → use `Pick<T, ...>`, `Omit<T, ...>`, `Partial<T>`
+- Repeated magic strings/numbers → extract a `const` at module scope
+- Multi-step promise chains → `async/await`
+
 ---
 
 ## Step 3 — Plan
@@ -110,6 +147,8 @@ Apply changes in the order listed in the plan. For each change:
 - Do not rewrite logic — only restructure it
 - Do not add new functionality
 - Do not change formatting of untouched lines (the formatter handles that)
+- Prefer the shorter equivalent: if `?.`, `??`, a ternary, or a utility type replaces
+  3+ lines with 1, make that trade — readability and brevity are the same goal here
 
 **When extracting components:**
 - Place them in the same file if they are only used there, or in `src/components/` if shared
@@ -159,6 +198,8 @@ Changes:
 - src/components/Foo.tsx — extracted FooHeader sub-component (line 42–78)
 - src/features/workflows/hooks/use-fetch-workflow.ts — new hook (extracted from WorkflowList + WorkflowDetail)
 - src/app/(dashboard)/workflows/page.tsx — pushed "use client" down to WorkflowActions
+
+Code reduction: -34 lines net (3 dead imports removed, 2 derived states inlined, verbose null checks → ?.)
 
 Behaviour unchanged: same props, same render output, same exported types.
 Verified: lint ✓  typecheck ✓  Chrome console clean ✓
