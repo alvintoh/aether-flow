@@ -58,3 +58,11 @@ export const useRemoveWorkflow = () => {
     }),
   );
 };
+
+/**
+ * Hook to fetch a single workflow using suspense
+ */
+export const useSuspenseWorkflow = (id: string) => {
+  const trpc = useTRPC();
+  return useSuspenseQuery(trpc.workflows.getOne.queryOptions({ id }));
+};
