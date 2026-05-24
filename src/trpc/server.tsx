@@ -1,8 +1,6 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import {
-  createTRPCOptionsProxy,
-  TRPCQueryOptions,
-} from "@trpc/tanstack-react-query";
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
+import type { TRPCQueryOptions } from "@trpc/tanstack-react-query";
 import { headers } from "next/headers";
 import { cache } from "react";
 

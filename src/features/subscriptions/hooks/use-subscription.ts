@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { authClient } from "@/lib/auth-client";
 
-export function useSubscription() {
+export const useSubscription = () => {
   return useQuery({
     queryKey: ["subscription"],
     queryFn: async () => {
@@ -12,7 +12,7 @@ export function useSubscription() {
   });
 }
 
-export function useHasActiveSubscription() {
+export const useHasActiveSubscription = () => {
   const { data: customerState, isLoading, ...rest } = useSubscription();
 
   const hasActiveSubscription =

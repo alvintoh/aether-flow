@@ -8,6 +8,10 @@
     "no-debugger": "error",
     "import/no-duplicates": "error",
     "typescript/no-explicit-any": "warn",
+    "typescript/consistent-type-imports": "error",
+    "typescript/no-non-null-assertion": "warn",
+    "typescript/prefer-nullish-coalescing": "error",
+    "typescript/use-unknown-in-catch-callback-variable": "error",
     "react/self-closing-comp": "error",
     "react/jsx-no-useless-fragment": "warn",
     "nextjs/no-img-element": "error",
@@ -16,9 +20,11 @@
   "overrides": [
     {
       "files": [
+        "src/features/**/hooks/**/*.ts",
         "src/features/**/*.tsx",
         "src/components/*.tsx",
         "src/trpc/**/*.tsx",
+        "src/hooks/**/*.ts",
         "src/hooks/**/*.tsx"
       ],
       "rules": {

@@ -16,7 +16,7 @@ import {
   LoadingView,
 } from "@/components/entity-components";
 import { useEntitySearch } from "@/features/workflows/hooks/use-entity-search";
-import { Workflow } from "@/generated/prisma/browser";
+import type { Workflow } from "@/generated/prisma/browser";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
 
 import {
