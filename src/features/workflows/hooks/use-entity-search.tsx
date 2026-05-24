@@ -13,11 +13,11 @@ interface UseEntitySearchProps<
   debounceMs?: number;
 }
 
-export function useEntitySearch<T extends { search: string; page: number }>({
+export const useEntitySearch = <T extends { search: string; page: number }>({
   params,
   setParams,
   debounceMs = 500,
-}: UseEntitySearchProps<T>) {
+}: UseEntitySearchProps<T>) => {
   const [localSearch, setLocalSearch] = useState(params.search);
 
   useEffect(() => {

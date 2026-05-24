@@ -7,3 +7,6 @@ pre-commit:
 
     structure-check:
       run: bash .lefthook/structure-check.sh
+    lint:
+      glob: "src/**/*.{ts,tsx}"
+      run: bun lint

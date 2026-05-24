@@ -16,6 +16,17 @@
   "overrides": [
     {
       "files": [
+        "src/features/**/*.tsx",
+        "src/components/*.tsx",
+        "src/trpc/**/*.tsx",
+        "src/hooks/**/*.tsx"
+      ],
+      "rules": {
+        "func-style": ["error", "expression", { "allowArrowFunctions": true }]
+      }
+    },
+    {
+      "files": [
         "src/app/**/page.tsx",
         "src/app/**/layout.tsx",
         "src/app/**/template.tsx",

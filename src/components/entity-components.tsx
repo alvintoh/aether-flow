@@ -232,13 +232,13 @@ interface EntityListProps<T> {
   className?: string;
 }
 
-export function EntityList<T>({
+export const EntityList = <T,>({
   items,
   renderItem,
   getKey,
   emptyView,
   className,
-}: EntityListProps<T>) {
+}: EntityListProps<T>) => {
   if (items.length === 0 && emptyView) {
     return (
       <div className="flex-1 flex justify-center items-center">

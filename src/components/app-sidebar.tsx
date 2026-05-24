@@ -50,7 +50,7 @@ const menuItems = [
   },
 ];
 
-export default function AppSidebar() {
+const AppSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { hasActiveSubscription, isLoading } = useHasActiveSubscription();
@@ -145,4 +145,6 @@ export default function AppSidebar() {
       </SidebarFooter>
     </Sidebar>
   );
-}
+};
+
+export default AppSidebar;

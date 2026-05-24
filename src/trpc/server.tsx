@@ -32,22 +32,22 @@ export const caller = appRouter.createCaller(async () =>
   }),
 );
 
-export function prefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
+export const prefetch = <T extends ReturnType<TRPCQueryOptions<any>>>(
   queryOptions: T,
-) {
+) => {
   const queryClient = getQueryClient();
   if (queryOptions.queryKey[1]?.type === "infinite") {
     return queryClient.prefetchInfiniteQuery(queryOptions as any);
   } else {
     return queryClient.prefetchQuery(queryOptions);
   }
-}
+};
 
-export function HydrateClient(props: { children: React.ReactNode }) {
+export const HydrateClient = (props: { children: React.ReactNode }) => {
   const queryClient = getQueryClient();
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       {props.children}
     </HydrationBoundary>
   );
-}
+};

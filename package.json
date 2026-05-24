@@ -78,7 +78,6 @@
     "oxlint": "^1.60.0",
     "prisma": "^7.7.0",
     "tailwindcss": "^4",
-    "tsx": "^4.21.0",
     "typescript": "^5"
   },
   "ignoreScripts": [

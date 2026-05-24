@@ -34,7 +34,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export function LoginForm() {
+export const LoginForm = () => {
   const router = useRouter();
 
   const form = useForm({

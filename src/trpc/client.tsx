@@ -14,7 +14,7 @@ import type { AppRouter } from "@/trpc/routers/_app";
 export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
 
 let browserQueryClient: QueryClient;
-function getQueryClient() {
+const getQueryClient = () => {
   if (typeof window === "undefined") {
     // Server: always make a new query client
     return makeQueryClient();
@@ -26,22 +26,22 @@ function getQueryClient() {
   // have a suspense boundary BELOW the creation of the query client
   if (!browserQueryClient) browserQueryClient = makeQueryClient();
   return browserQueryClient;
-}
+};
 
-function getUrl() {
+const getUrl = () => {
   const base = (() => {
     if (typeof window !== "undefined") return "";
     if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
     return "http://localhost:3000";
   })();
   return `${base}/api/trpc`;
-}
+};
 
-export function TRPCReactProvider(
+export const TRPCReactProvider = (
   props: Readonly<{
     children: React.ReactNode;
   }>,
-) {
+) => {
   // NOTE: Avoid useState when initializing the query client if you don't
   //       have a suspense boundary between this and the code that may
   //       suspend because React will throw away the client on the initial
