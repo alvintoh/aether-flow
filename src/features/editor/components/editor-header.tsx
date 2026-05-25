@@ -90,7 +90,7 @@ export const EditorNameInput = ({ workflowId }: { workflowId: string }) => {
   );
 };
 
-export const EditorSaveButton = ({ workflowId: _workflowId }: { workflowId: string }) => {
+export const EditorSaveButton = ({ workflowId }: { workflowId: string }) => {
   return (
     <div className="ml-auto">
       <Button size="sm" onClick={() => {}} disabled={false}>
