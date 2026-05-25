@@ -2,6 +2,7 @@
 
 import { SaveIcon } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 import {
   Breadcrumb,
@@ -11,13 +12,90 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  useSuspenseWorkflow,
+  useUpdateWorkflowName,
+} from "@/features/workflows/hooks/use-workflows";
 
-export const EditorSaveButton = ({ workflowId }: { workflowId: string }) => {
+export const EditorNameInput = ({ workflowId }: { workflowId: string }) => {
+  const { data: workflow } = useSuspenseWorkflow(workflowId);
+  const updateWorkflow = useUpdateWorkflowName();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(workflow.name);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (workflow.name) {
+      setName(workflow.name);
+    }
+  }, [workflow.name]);
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+  }, [isEditing]);
+
+  const handleSave = async () => {
+    if (name === workflow.name) {
+      setIsEditing(false);
+      return;
+    }
+
+    try {
+      await updateWorkflow.mutateAsync({ id: workflowId, name });
+    } catch {
+      setName(workflow.name);
+    } finally {
+      setIsEditing(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSave();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setName(workflow.name);
+      setIsEditing(false);
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <Input
+        ref={inputRef}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        onBlur={handleSave}
+        onKeyDown={handleKeyDown}
+        className="h-7 w-auto min-w-[100px] px-2"
+      />
+    );
+  }
+
+  return (
+    <BreadcrumbItem
+      onClick={() => setIsEditing(true)}
+      className="cursor-pointer hover:text-foreground transition-colors"
+    >
+      <BreadcrumbLink>{workflow.name}</BreadcrumbLink>
+    </BreadcrumbItem>
+  );
+};
+
+export const EditorSaveButton = ({ workflowId: _workflowId }: { workflowId: string }) => {
   return (
     <div className="ml-auto">
       <Button size="sm" onClick={() => {}} disabled={false}>
-        <SaveIcon className="size-4">Save</SaveIcon>
+        <SaveIcon className="size-4" />
+        Save
       </Button>
     </div>
   );
@@ -35,9 +113,7 @@ export const EditorBreadCrumbs = ({ workflowId }: { workflowId: string }) => {
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink>{workflowId}</BreadcrumbLink>
-        </BreadcrumbItem>
+        <EditorNameInput workflowId={workflowId} />
       </BreadcrumbList>
     </Breadcrumb>
   );
