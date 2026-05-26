@@ -40,7 +40,44 @@ type CreateUserInput = z.infer<typeof schema>;
 
 ## Database (Prisma / Drizzle)
 
-- Avoid N+1 queries — use `include`, `with`, or `select` to batch related data in one query
+### Schema conventions
+
+These apply regardless of ORM so the schema stays portable if the project migrates between Prisma and Drizzle.
+
+| Thing | Convention | Rationale |
+|---|---|---|
+| Model / table class name | `PascalCase` | Idiomatic in TypeScript |
+| Field / column name | `camelCase` in schema | Prisma generates camelCase client; Drizzle does too |
+| DB table name | `snake_case` via `@@map` (Prisma) or `pgTable("snake_case", ...)` (Drizzle) | PostgreSQL folds unquoted identifiers to lowercase; PascalCase table names require quoting everywhere |
+| DB column name | camelCase is fine unless you need raw SQL interop | Adding `@map("snake_case")` / column name in Drizzle only needed if external services query the DB directly |
+| Enum names | `PascalCase` | |
+| Enum values | `SCREAMING_SNAKE_CASE` | |
+
+**Prisma example (Option A — table snake_case, columns camelCase):**
+```prisma
+model Workflow {
+  id        String   @id @default(cuid())
+  userId    String                         // column stays "userId" in DB
+  createdAt DateTime @default(now())
+
+  @@map("workflow")                        // table is "workflow" in DB
+}
+```
+
+**Drizzle equivalent:**
+```ts
+export const workflow = pgTable("workflow", {
+  id:        text("id").primaryKey().$defaultFn(() => createId()),
+  userId:    text("userId").notNull(),     // column name matches Prisma camelCase
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+```
+
+> **Migration note:** If the project moves from Prisma to Drizzle (or vice versa), the DB table names stay stable — only the ORM layer changes. This is the main value of the convention above.
+
+### Query rules
+
+- Avoid N+1 queries — use `include`/`with` or `select` to batch related data in one query
 - Never select `*` — specify only the fields you need
 - Use transactions for operations that must succeed or fail together
 - Paginate all list queries — never return unbounded result sets
@@ -49,10 +86,16 @@ type CreateUserInput = z.infer<typeof schema>;
 - Run migrations in CI — never apply schema changes manually in production
 
 ```ts
-// batch related data in one query, never loop with separate queries
-const posts = await db.post.findMany({
-  include: { author: { select: { name: true } } },
+// Prisma — batch related data, never loop with separate queries
+const workflows = await prisma.workflow.findMany({
+  include: { nodes: { select: { id: true, name: true, type: true } } },
 });
+
+// Drizzle equivalent
+const workflows = await db
+  .select()
+  .from(workflow)
+  .leftJoin(node, eq(node.workflowId, workflow.id));
 ```
 
 ---
