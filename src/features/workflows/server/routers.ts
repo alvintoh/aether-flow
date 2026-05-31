@@ -24,11 +24,6 @@ export const workflowsRouter = createTRPCRouter({
               position: { x: 0, y: 0 },
               name: NodeType.INITIAL,
             },
-            {
-              type: NodeType.INITIAL,
-              position: { x: 0, y: 200 },
-              name: NodeType.INITIAL,
-            },
           ],
         },
       },
