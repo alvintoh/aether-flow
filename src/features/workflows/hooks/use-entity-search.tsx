@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { PAGINATION } from "@/lib/constants";
+import { PAGINATION } from "@/config/constants";
 
 interface UseEntitySearchProps<
   T extends {
@@ -48,4 +48,4 @@ export const useEntitySearch = <T extends { search: string; page: number }>({
     searchValue: localSearch,
     onSearchChange: setLocalSearch,
   };
-}
+};
