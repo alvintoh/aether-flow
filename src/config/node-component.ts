@@ -1,6 +1,6 @@
 import type { NodeTypes } from "@xyflow/react";
 
-import { InitialNode } from "@/components/initial-node";
+import { InitialNode } from "@/features/editor/components/initial-node";
 import { NodeType } from "@/generated/prisma/enums";
 
 export const nodeComponents = {
