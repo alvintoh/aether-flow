@@ -6,7 +6,6 @@ description: >
   "visualize module boundaries", "show data flow", or "draw system design".
   Creates 3 diagrams: folder structure, data flow, and system architecture.
   Saves output to docs/diagrams/ in the project.
-disable-model-invocation: true
 argument-hint: "[all|structure|dataflow|architecture]"
 ---
 

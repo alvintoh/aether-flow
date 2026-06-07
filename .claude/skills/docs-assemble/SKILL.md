@@ -7,7 +7,6 @@ description: >
   in parallel to write each section, then assembles the final document.
   Skips agents whose watched files have not changed since the last assembly.
   Self-adapts to any project via a relevance check on first run after a sync.
-disable-model-invocation: true
 ---
 
 # README Assembler
@@ -155,18 +154,19 @@ Compare the returned hash to the stored hash in the manifest. If they match,
 the section is **unchanged** — skip its agent dispatch. If they differ or the
 manifest has no entry, the section is **changed** — dispatch the agent.
 
-### Default section → watched files map (dev-portfolio-v1)
+### Default section → watched files map (aether-flow)
 
 Used only when the relevance check passes (same project as last run):
 
 | Section | Watched files |
 |---------|--------------|
 | `getting-started` | `package.json` |
-| `architecture` | `src/app/` `src/components/` `src/data/` |
-| `data-contracts` | `src/data/` |
-| `design-system` | `src/app/globals.css` `src/components/` |
-| `deployment` | `vercel.json` `.github/workflows/` `package.json` |
-| `roadmap` | `src/app/` `src/components/` |
+| `architecture` | `src/app/` `src/features/` `src/components/` `src/trpc/` |
+| `api-contracts` | `src/trpc/routers/` `prisma/schema.prisma` |
+| `background-jobs` | `src/inngest/` |
+| `environment-variables` | `.env.example` `prisma/schema.prisma` |
+| `deployment` | `vercel.json` `.github/workflows/` `.devcontainer/` `package.json` |
+| `roadmap` | `src/app/` `src/features/` |
 
 Print a change summary before dispatching:
 
@@ -213,32 +213,33 @@ Each agent must:
 
 ---
 
-### Dispatch 1 — `architect` → `## Architecture`
+### Dispatch 1 — `architecture` → `## Architecture`
 *(skip if unchanged)*
 
 ```
-You are the architect agent for the dev-portfolio-v1 project.
+You are the architecture agent for the aether-flow project.
 
-Read `.claude/agents/architect.md` for your role and standards.
+Read `.claude/agents/architecture.md` for your role and standards.
 
 Your task: Write the `## Architecture` section for README.md.
 
 Source files to read:
-- `src/app/`           — App Router pages and layout
-- `src/components/`    — UI components grouped by page (home/, techstack/, shared)
-- `src/data/`          — Static TypeScript data grouped by page (home/, techstack/)
-- `src/app/globals.css`
+- `src/app/`       — App Router pages, route groups (auth), (dashboard)
+- `src/features/`  — feature modules, each owning components/hooks/server
+- `src/components/` — shared UI components and shadcn primitives
+- `src/trpc/`      — tRPC router wiring and client setup
+- `src/lib/`       — shared utilities and singletons (db, auth)
 - `docs/diagrams/structure.svg`    (include image embed if it exists)
 - `docs/diagrams/dataflow.svg`     (include image embed if it exists)
 - `docs/diagrams/architecture.svg` (include image embed if it exists)
 
 The section must:
-- Open with 2–3 sentences describing the three-layer architecture
-- Include a Pages table (route, file, description)
-- Include a Key components table (component, boundary, description)
-- Note that all section components are Server Components
+- Open with 2–3 sentences describing the full-stack feature-first architecture
+- Include a Route groups table (group, path, purpose)
+- Include a Key layers table (layer, path, description)
+- Note the tRPC + React Query data fetching pattern
 - Include diagram image embeds only if the SVG files exist
-- End with: Run `/arch-diagram` in Claude Code to regenerate these diagrams if the component structure changes.
+- End with: Run `/arch-diagram` in Claude Code to regenerate these diagrams if the structure changes.
 
 Return the markdown section only. Start with `## Architecture`.
 ```
@@ -249,7 +250,7 @@ Return the markdown section only. Start with `## Architecture`.
 *(skip if unchanged)*
 
 ```
-You are the frontend agent for the dev-portfolio-v1 project.
+You are the frontend agent for the aether-flow project.
 
 Read `.claude/agents/frontend.md` for your role and standards.
 
@@ -259,8 +260,9 @@ Source files to read:
 - `package.json` — use the exact script names from the "scripts" field
 
 The section must:
+- Mention that DATABASE_URL and other env vars are required before running (link to Environment variables section)
 - Show `bun install` then `bun dev` as a bash code block
-- Include a commands table with: bun dev, bun build, bun start, bun lint, bun typecheck
+- Include a commands table with all scripts from package.json
 - End with: Open http://localhost:3000 in your browser.
 - Use second person
 
@@ -269,54 +271,52 @@ Return the markdown section only. Start with `## Getting started`.
 
 ---
 
-### Dispatch 3 — `spec` → `## Data contracts & schemas`
+### Dispatch 3 — `spec` → `## API & tRPC contracts`
 *(skip if unchanged)*
 
 ```
-You are the spec agent for the dev-portfolio-v1 project.
+You are the spec agent for the aether-flow project.
 
 Read `.claude/agents/spec.md` for your role and standards.
 
-Your task: Write the `## Data contracts & schemas` section for README.md.
+Your task: Write the `## API & tRPC contracts` section for README.md.
 
 Source files to read:
-- `src/data/home/`      — glob all .ts files
-- `src/data/techstack/` — glob all .ts files
+- `src/trpc/routers/`  — glob all router files
+- `prisma/schema.prisma` — database schema
 
 The section must:
-- Open with: All content is static TypeScript in `src/data/`, no runtime fetching, no CMS, no database.
-- A `### src/data/home/` table: File | Exported type | Description
-- A `### src/data/techstack/` table: File | Exported type | Description
-- An import example block using the `@/data/*` alias
-- Conventions note: `as const` on static arrays
+- Open with a description of the tRPC v11 + React Query v5 data layer
+- A Routers table: Router | Procedures | Description
+- A Database models table derived from prisma/schema.prisma: Model | Key fields | Relations
+- A usage example showing how to call a tRPC procedure from a client component
+- Note that the Prisma client is generated to `src/generated/prisma/`, not `@prisma/client`
 
-Return the markdown section only. Start with `## Data contracts & schemas`.
+Return the markdown section only. Start with `## API & tRPC contracts`.
 ```
 
 ---
 
-### Dispatch 4 — `design` → `## Design system`
+### Dispatch 4 — `backend` → `## Background jobs`
 *(skip if unchanged)*
 
 ```
-You are the design agent for the dev-portfolio-v1 project.
+You are the backend agent for the aether-flow project.
 
-Read `.claude/agents/design.md` for your role and standards.
+Read `.claude/agents/backend.md` for your role and standards.
 
-Your task: Write the `## Design system` section for README.md.
+Your task: Write the `## Background jobs` section for README.md.
 
 Source files to read:
-- `src/app/globals.css`
-- `src/components/ThemeProvider.tsx`
+- `src/inngest/` — glob all function files
 
 The section must:
-- Explain CSS custom properties surfaced to Tailwind via `@theme inline`
-- Dark mode default (`:root`), light via `data-theme="light"` on `<html>`
-- First-visit detection flow (prefers-color-scheme → localStorage → ThemeProvider)
-- Token reference table: Token | Dark | Light — covering --background, --foreground, --heading, --accent, --surface
-- Mention smooth transition CSS
+- Open with a description of Inngest for durable background job processing
+- A Jobs table: Function name | Trigger event | Description
+- Note the INNGEST_DEV=1 env var for local development
+- Note the Inngest dev server port (8288) and how to access the dashboard
 
-Return the markdown section only. Start with `## Design system`.
+Return the markdown section only. Start with `## Background jobs`.
 ```
 
 ---
@@ -325,7 +325,7 @@ Return the markdown section only. Start with `## Design system`.
 *(skip if unchanged)*
 
 ```
-You are the devops agent for the dev-portfolio-v1 project.
+You are the devops agent for the aether-flow project.
 
 Read `.claude/agents/devops.md` for your role and standards.
 
@@ -333,14 +333,16 @@ Your task: Write the `## Deployment & CI/CD` section for README.md.
 
 Source files to read:
 - `package.json`
-- `vercel.json`          (if it exists)
-- `.github/workflows/`   (if any files exist)
+- `vercel.json`             (if it exists)
+- `.github/workflows/`      (if any files exist)
+- `.devcontainer/devcontainer.json` (if it exists)
 
 The section must:
 - State Vercel is the deployment target, merging to `main` triggers production
-- Include a Vercel deploy badge/button
 - Note preview deployments for every PR
-- If NO CI workflow exists, include the recommended minimal yaml (lint + typecheck + build)
+- Document Codespaces support if .devcontainer/ exists
+- If CI workflow exists, document the pipeline steps; if not, include the recommended minimal yaml
+- Note the DATABASE_URL and other env vars must be set in Vercel project settings
 
 Return the markdown section only. Start with `## Deployment & CI/CD`.
 ```
@@ -351,7 +353,7 @@ Return the markdown section only. Start with `## Deployment & CI/CD`.
 *(skip if unchanged)*
 
 ```
-You are the enhancement agent for the dev-portfolio-v1 project.
+You are the enhancement agent for the aether-flow project.
 
 Read `.claude/agents/enhancement.md` for your role and standards.
 
@@ -359,13 +361,13 @@ Your task: Write the `## Roadmap` section for README.md.
 
 Source files to read:
 - `src/app/` (glob)
-- `src/components/` (glob)
+- `src/features/` (glob)
 
 The section must:
 - Only list features genuinely NOT yet in the codebase
 - Three groups: **In progress**, **Planned**, **Stretch goals**
 - Checkbox format: `- [ ] Feature`
-- Prioritise by recruiter and product impact
+- Prioritise by user impact
 
 Return the markdown section only. Start with `## Roadmap`.
 ```
@@ -380,16 +382,10 @@ Always rewrite these — they are owned by the docs agent and not change-gated:
 
 **`## Overview`** — 2–3 sentences on what the project is, key architectural decisions, and a bold tech stack line from the actual dependencies in `package.json`.
 
-**`## Environment variables`** — this project requires no environment variables. Write:
-
-> No environment variables are required to run this project locally.
->
-> If environment variables are added in future (for example, to support a contact form or external API), they should be:
-> 1. Added to a `.env.example` file at the project root (committed, with values redacted)
-> 2. Configured in Vercel under **Project Settings → Environment Variables**
-
-If Discovery ran and found a `.env.example` or environment variable usage in source files,
-replace this with an actual environment variables table instead.
+**`## Environment variables`** — read `.env.example` if it exists and derive the table from it.
+If `.env.example` is absent, scan `prisma/schema.prisma` for `env()` calls and `src/lib/` for
+`process.env` references to infer required variables. Write a table with columns:
+Variable | Required | Description. Always include DATABASE_URL, any auth secret vars, and INNGEST_* vars.
 
 ---
 

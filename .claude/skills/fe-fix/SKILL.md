@@ -27,7 +27,7 @@ do not touch them.
 If the task involves a visible UI bug, check Chrome MCP is connected before proceeding:
 
 ```
-mcp__claude-in-chrome__tabs_context_mcp
+mcp__claude_in_chrome__tabs_context_mcp
 ```
 
 If the call fails or the tool is missing, **stop and ask the user** using AskUserQuestion:

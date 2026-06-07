@@ -1,17 +1,17 @@
 ---
 name: fe-create
 description: >
-  Scaffold and build a new frontend feature for this Next.js portfolio.
-  Reads existing data files and component patterns first, builds following
+  Scaffold and build a new frontend feature for this Next.js app.
+  Reads existing feature modules and component patterns first, builds following
   project conventions, verifies with lint and typecheck, then uses Chrome MCP
   to confirm zero console errors in the browser.
-  Use when the user says "create X", "add X feature", "build X", or "I want X on the site".
+  Use when the user says "create X", "add X feature", "build X", or "I want X".
 argument-hint: "<feature-description>"
 ---
 
 # Frontend Feature Builder
 
-Build a new frontend feature for this Next.js + TypeScript + Tailwind portfolio.
+Build a new frontend feature for this Next.js + TypeScript + Tailwind app.
 Follow existing project patterns precisely — do not introduce new conventions.
 
 ## Arguments
@@ -21,17 +21,18 @@ Follow existing project patterns precisely — do not introduce new conventions.
 
 ---
 
-## Step 1 — Understand the page structure
+## Step 1 — Understand the project structure
 
-Read only these three files — they give the full layout and token picture:
+Read these files to get the layout and token picture:
 
 ```
-src/app/page.tsx        — section layout and component composition
 src/app/layout.tsx      — root layout, metadata, global wrappers
 src/app/globals.css     — theme tokens (colours, spacing, custom utilities)
+CLAUDE.md               — folder conventions, stack, gotchas
 ```
 
-Note which sections exist, what theme tokens are available, and how components are composed.
+Then glob `src/features/` to see which feature modules already exist.
+Note which features are present, what theme tokens are available, and how components are structured.
 
 ---
 
