@@ -1,0 +1,30 @@
+{
+  "recommendations": [
+    "anthropic.claude-code",
+    "bradlc.vscode-tailwindcss",
+    "brittanychiang.halcyon-vscode",
+    "christian-kohler.path-intellisense",
+    "coderabbit.coderabbit-vscode",
+    "csstools.postcss",
+    "dsznajder.es7-react-js-snippets",
+    "editorconfig.editorconfig",
+    "formulahendry.auto-rename-tag",
+    "jock.svg",
+    "medo64.render-crlf",
+    "ms-vscode-remote.remote-containers",
+    "ms-python.debugpy",
+    "ms-python.isort",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.vscode-python-envs",
+    "naumovs.color-highlight",
+    "oxc.oxc-vscode",
+    "pkief.material-icon-theme",
+    "pomdtr.excalidraw-editor",
+    "pranaygp.vscode-css-peek",
+    "prisma.prisma-insider",
+    "redhat.vscode-yaml",
+    "usernamehw.errorlens",
+    "yoavbls.pretty-ts-errors"
+  ]
+}
