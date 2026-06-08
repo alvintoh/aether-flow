@@ -1,5 +1,5 @@
 ---
-name: gh-resolve
+name: resolve-issue
 description: >
   Resolve a GitHub issue end-to-end: list open issues, pick one, read it, locate
   the relevant code, apply the minimum fix, commit referencing the issue, then

@@ -1,5 +1,5 @@
 ---
-name: fe-refactor
+name: refactor-code
 description: >
   Refactor a frontend area for structure, readability, maintainability, and code
   reduction — no behaviour changes. Takes an optional target (component, directory,

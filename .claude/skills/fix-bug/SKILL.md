@@ -1,5 +1,5 @@
 ---
-name: fe-fix
+name: fix-bug
 description: >
   Surgically fix a specific frontend bug or error. Takes an optional bug description,
   file path, or error message as input. Captures live Chrome console logs first,

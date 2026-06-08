@@ -1,5 +1,5 @@
 ---
-name: gh-issue
+name: create-issue
 description: >
   Create a structured GitHub issue from a bug description, stakeholder report, QA findings, or live
   browser errors. Runs lightweight analysis if no input is given. Labels and

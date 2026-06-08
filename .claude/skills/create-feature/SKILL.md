@@ -1,5 +1,5 @@
 ---
-name: fe-create
+name: create-feature
 description: >
   Scaffold and build a new frontend feature for this Next.js app.
   Reads existing feature modules and component patterns first, builds following

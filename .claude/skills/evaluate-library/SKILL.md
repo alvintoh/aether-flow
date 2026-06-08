@@ -1,5 +1,5 @@
 ---
-name: arch-evaluate
+name: evaluate-library
 description: >
   Evaluate whether adding a new library or replacing an existing tool is
   architecturally sound for this project. Covers compatibility, overlap,

@@ -1,5 +1,5 @@
 ---
-name: ci-setup
+name: setup-ci
 description: Bootstrap the full quality pipeline from scratch — GitHub Actions CI workflow, Lefthook pre-commit/pre-push hooks, structure-check script, branch protection, and CodeRabbit. Idempotent — safe to run on an already-configured project.
 ---
 

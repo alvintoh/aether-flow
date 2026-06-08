@@ -1,5 +1,5 @@
 ---
-name: arch-diagram
+name: diagram-arch
 description: >
   Generate Excalidraw architecture diagrams for the current repository.
   Use when the user asks to "diagram the architecture", "map project structure",

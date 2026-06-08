@@ -1,5 +1,5 @@
 ---
-name: docs-assemble
+name: assemble-docs
 description: >
   Orchestrate all contributing agents to assemble a complete, best-practices README.md.
   Use when README.md needs a full refresh or first-time assembly.
