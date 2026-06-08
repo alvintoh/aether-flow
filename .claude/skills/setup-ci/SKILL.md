@@ -28,7 +28,7 @@ If `gh auth status` fails, stop and tell the user:
 ```
 gh is not authenticated. Run:
   gh auth login
-Then re-run /ci-setup.
+Then re-run /setup-ci.
 ```
 
 If there is no git remote, warn but continue — branch protection will be skipped.
@@ -54,9 +54,6 @@ grep -q '"lefthook"' package.json && echo "lefthook dep: EXISTS" || echo "leftho
 
 # Lefthook git hooks installed
 [ -f ".git/hooks/pre-commit" ] && echo "git hooks: INSTALLED" || echo "git hooks: NOT INSTALLED"
-
-# Prisma (determines whether to include generate step)
-[ -f "prisma/schema.prisma" ] && echo "prisma: EXISTS" || echo "prisma: MISSING"
 
 # Branch protection
 gh repo view --json nameWithOwner --jq '.nameWithOwner' 2>/dev/null
@@ -102,49 +99,7 @@ Create the directory if needed:
 mkdir -p .github/workflows
 ```
 
-Write the workflow. Include the Prisma generate step only if `prisma/schema.prisma` was found in Step 2:
-
-**With Prisma:**
-
-```yaml
-name: CI
-
-on:
-  pull_request:
-    branches:
-      - main
-
-jobs:
-  ci:
-    name: Typecheck · Lint · Format
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Generate Prisma client
-        run: bun --bun run prisma generate
-        env:
-          DATABASE_URL: postgresql://localhost/ci
-
-      - name: Typecheck
-        run: bunx tsc --noEmit
-
-      - name: Lint
-        run: bun lint
-
-      - name: Format check
-        run: bun format:check
-```
-
-**Without Prisma:**
+Write the workflow:
 
 ```yaml
 name: CI

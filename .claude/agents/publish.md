@@ -19,7 +19,7 @@ Run this agent when any of the following change:
 - `CHANGELOG.md`
 - `docs/**/*.md`
 - `docs/**/*.mdx`
-- `prisma/schema.prisma` — regenerate API reference if OpenAPI is wired
+- `src/db/schema.ts` — regenerate API reference if OpenAPI is wired
 - Any file listed in `mint.json` or the Notion sync config (once configured)
 
 ---

@@ -16,7 +16,7 @@ Follow existing project patterns precisely — do not introduce new conventions.
 
 ## Arguments
 
-- `/fe-create <feature>` — describe the feature to build
+- `/create-feature <feature>` — describe the feature to build
 - If no argument is given, ask the user what they want to build.
 
 ---
@@ -58,7 +58,7 @@ State your plan in 3–5 bullet points:
 
 - Which file(s) will be created or modified
 - Where in `src/app/page.tsx` the feature will be inserted (if applicable)
-- Whether a new tRPC procedure or Prisma query is needed
+- Whether a new tRPC procedure or Drizzle query is needed
 - Whether the component is feature-scoped (`src/features/<feature>/components/`) or shared (`src/components/`)
 - Whether `"use client"` is required and why (or why not)
 

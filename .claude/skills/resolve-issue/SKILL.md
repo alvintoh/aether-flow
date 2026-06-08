@@ -14,8 +14,8 @@ Pick a GitHub issue, fix it, and ship it — push directly or open a PR.
 
 ## Arguments
 
-- `/gh-resolve <number>` — skip the list, go straight to that issue
-- `/gh-resolve` (no args) — show open issues and let the user pick
+- `/resolve-issue <number>` — skip the list, go straight to that issue
+- `/resolve-issue` (no args) — show open issues and let the user pick
 
 ---
 

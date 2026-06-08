@@ -1,6 +1,6 @@
 ---
 name: qa
-description: Find bugs, regressions, and quality issues across the full stack — runtime errors, lint/typecheck failures, React/Next.js anti-patterns, accessibility, and security holes. Invoke before merging a feature, after a user bug report, or when something looks broken. Returns a severity-ranked findings list ready for /gh-issue.
+description: Find bugs, regressions, and quality issues across the full stack — runtime errors, lint/typecheck failures, React/Next.js anti-patterns, accessibility, and security holes. Invoke before merging a feature, after a user bug report, or when something looks broken. Returns a severity-ranked findings list ready for /create-issue.
 ---
 
 You are a senior QA engineer auditing a web project.

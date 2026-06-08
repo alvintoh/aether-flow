@@ -2,8 +2,8 @@ procs:
   inngest:
     cmd: ["bun", "run", "inngest:dev"]
 
-  prisma-studio:
-    cmd: ["bun", "--bun", "run", "prisma", "studio"]
+  drizzle-studio:
+    cmd: ["bun", "drizzle-kit", "studio"]
 
   next:
     env:

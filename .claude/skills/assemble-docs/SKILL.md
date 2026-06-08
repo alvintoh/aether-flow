@@ -74,7 +74,7 @@ find . -maxdepth 3 -type d \
   | sort
 
 # Config files
-ls vercel.json .env.example prisma/schema.prisma 2>/dev/null
+ls vercel.json .env.example src/db/schema.ts 2>/dev/null
 ls .github/workflows/ 2>/dev/null
 ```
 
@@ -86,7 +86,7 @@ From what exists, build the mapping. Rules:
 |---|---|---|
 | `src/app/` or `src/pages/` | `architecture` | all source dirs that contain components/pages |
 | `src/components/` | `architecture` | add to architecture watch |
-| `src/data/` or `prisma/` | `data-contracts` | `src/data/` and/or `prisma/` |
+| `src/data/` or `src/db/` | `data-contracts` | `src/data/` and/or `src/db/` |
 | `src/app/globals.css` or a CSS theme file | `design-system` | that file + `src/components/` |
 | `vercel.json` or `.github/workflows/` | `deployment` | those files + `package.json` |
 | Always | `getting-started` | `package.json` |
@@ -162,9 +162,9 @@ Used only when the relevance check passes (same project as last run):
 |---------|--------------|
 | `getting-started` | `package.json` |
 | `architecture` | `src/app/` `src/features/` `src/components/` `src/trpc/` |
-| `api-contracts` | `src/trpc/routers/` `prisma/schema.prisma` |
+| `api-contracts` | `src/trpc/routers/` `src/db/schema.ts` |
 | `background-jobs` | `src/inngest/` |
-| `environment-variables` | `.env.example` `prisma/schema.prisma` |
+| `environment-variables` | `.env.example` `src/db/schema.ts` |
 | `deployment` | `vercel.json` `.github/workflows/` `.devcontainer/` `package.json` |
 | `roadmap` | `src/app/` `src/features/` |
 
@@ -184,12 +184,12 @@ Section changes detected:
 
 ## Step 3: Regenerate diagrams if needed
 
-Run `/arch-diagram` now (before dispatching section agents) if **either** condition is true:
+Run `/diagram-arch` now (before dispatching section agents) if **either** condition is true:
 
 - Any of the three SVGs from Step 1 are absent, **or**
 - The `architecture` section is marked **CHANGED** in Step 2
 
-The `arch-diagram` skill has its own component drift check and will skip individual
+The `diagram-arch` skill has its own component drift check and will skip individual
 diagrams that are already up to date — so calling it on every architecture change is safe.
 This ensures `docs/diagrams/*.excalidraw` and `docs/diagrams/*.svg` stay in sync with each other
 and with the assembled README.
@@ -239,7 +239,7 @@ The section must:
 - Include a Key layers table (layer, path, description)
 - Note the tRPC + React Query data fetching pattern
 - Include diagram image embeds only if the SVG files exist
-- End with: Run `/arch-diagram` in Claude Code to regenerate these diagrams if the structure changes.
+- End with: Run `/diagram-arch` in Claude Code to regenerate these diagrams if the structure changes.
 
 Return the markdown section only. Start with `## Architecture`.
 ```
@@ -283,14 +283,14 @@ Your task: Write the `## API & tRPC contracts` section for README.md.
 
 Source files to read:
 - `src/trpc/routers/`  — glob all router files
-- `prisma/schema.prisma` — database schema
+- `src/db/schema.ts` — database schema
 
 The section must:
 - Open with a description of the tRPC v11 + React Query v5 data layer
 - A Routers table: Router | Procedures | Description
-- A Database models table derived from prisma/schema.prisma: Model | Key fields | Relations
+- A Database models table derived from src/db/schema.ts: Model | Key fields | Relations
 - A usage example showing how to call a tRPC procedure from a client component
-- Note that the Prisma client is generated to `src/generated/prisma/`, not `@prisma/client`
+- Note that the DB client lives in `src/lib/db.ts` and schema in `src/db/schema.ts`
 
 Return the markdown section only. Start with `## API & tRPC contracts`.
 ```
@@ -383,7 +383,7 @@ Always rewrite these — they are owned by the docs agent and not change-gated:
 **`## Overview`** — 2–3 sentences on what the project is, key architectural decisions, and a bold tech stack line from the actual dependencies in `package.json`.
 
 **`## Environment variables`** — read `.env.example` if it exists and derive the table from it.
-If `.env.example` is absent, scan `prisma/schema.prisma` for `env()` calls and `src/lib/` for
+If `.env.example` is absent, scan `src/db/schema.ts` for `env()` calls and `src/lib/` for
 `process.env` references to infer required variables. Write a table with columns:
 Variable | Required | Description. Always include DATABASE_URL, any auth secret vars, and INNGEST_* vars.
 
@@ -445,5 +445,5 @@ The `"project"` field is what the relevance check in Step 0 reads on the next ru
 Report:
 - Whether Discovery ran (new project detected) or was skipped (same project)
 - Which sections were regenerated vs. skipped
-- Whether `/arch-diagram` was triggered
+- Whether `/diagram-arch` was triggered
 - Any assumptions made during Discovery

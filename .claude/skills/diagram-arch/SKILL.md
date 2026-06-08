@@ -15,10 +15,10 @@ Generate Excalidraw diagrams, export SVGs, and update `README.md` in one run.
 
 ## Arguments
 
-- `/arch-diagram all` — All 3 diagrams (default if no arg given)
-- `/arch-diagram structure` — Folder structure only
-- `/arch-diagram dataflow` — Data flow only
-- `/arch-diagram architecture` — System architecture only
+- `/diagram-arch all` — All 3 diagrams (default if no arg given)
+- `/diagram-arch structure` — Folder structure only
+- `/diagram-arch dataflow` — Data flow only
+- `/diagram-arch architecture` — System architecture only
 
 ---
 
@@ -118,12 +118,12 @@ Add `(N files)` counts inline. Limit depth to 2 levels below `src/`.
 1. **Browser** (`#a5d8ff`, 20%) — user action, UI rendering
 2. **Next.js Server** (`#b2f2bb`, 20%) — RSC, Server Actions, Route Handlers
 3. **API / Middleware** (`#d0bfff`, 20%) — tRPC, auth, validation
-4. **ORM** (`#c3fae8`, 20%) — Prisma queries, transactions
+4. **ORM** (`#c3fae8`, 20%) — Drizzle queries, transactions
 5. **Storage / External** (`#ffd8a8`, 20%) — PostgreSQL, third-party APIs
 
 Rules:
 - ≤ 5 nodes per row — collapse similar steps into one
-- Request arrows: solid, labeled (e.g. `"HTTP POST /api/trpc"`, `"prisma.user.findMany()"`)
+- Request arrows: solid, labeled (e.g. `"HTTP POST /api/trpc"`, `"db.query.user.findMany()"`)
 - Response arrows: `strokeStyle: "dashed"`, labeled with return value type
 - Show happy path only; omit error branches
 - Zone row label (large bold text) pinned to the left edge of each row

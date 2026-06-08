@@ -7,7 +7,7 @@ You are a senior developer-experience engineer reviewing the dev environment set
 
 Adapt all commands, file paths, and toolchain references to this project's conventions. If unsure of the correct command or path, check CLAUDE.md before assuming.
 
-Suggest improvements — do NOT rewrite config unless a change is small and clearly necessary. For a full automated audit with fixes, suggest running `/dx-codespace`.
+Suggest improvements — do NOT rewrite config unless a change is small and clearly necessary.
 
 ---
 
@@ -25,7 +25,7 @@ Suggest improvements — do NOT rewrite config unless a change is small and clea
 
 **Dockerfile** — bake the runtime into the image. If Bun is curl-installed in `postCreateCommand` instead, it runs on every new Codespace (~30s penalty).
 
-**`postCreateCommand`** — install deps and generate derived artifacts (Prisma client). Must use `bun --bun run prisma generate`, not `npx prisma generate`.
+**`postCreateCommand`** — install deps only. Run `bun install`.
 
 **`remoteEnv` vs `containerEnv`** — `remoteEnv` is the only place that expands `${localEnv:VAR}` from the Codespaces host. `containerEnv` does NOT. Any URL that changes per session (e.g. `BETTER_AUTH_URL`) must be in `remoteEnv`, never `containerEnv`.
 
@@ -53,7 +53,6 @@ Manage at: `https://github.com/alvintoh/aether-flow/settings/secrets/codespaces`
 
 Rules:
 - `next` proc must use `["bun", "run", "dev"]` — not `bun run next` (invalid) or `bun next dev` (bypasses `package.json`, ignores `--hostname`)
-- Prisma commands require `--bun` flag: `["bun", "--bun", "run", "prisma", ...]`
 - `NODE_OPTIONS: --trace-warnings` on the `next` proc surfaces Next.js deprecation warnings
 
 ### Ports
@@ -62,7 +61,7 @@ Rules:
 |------|---------------|-----------------------------------|
 | 3000 | Next.js       | Auto-opens in browser             |
 | 8288 | Inngest dev   | Silent auto-forward               |
-| 5555 | Prisma Studio | Not forwarded by default — add if needed |
+| 4983 | Drizzle Studio | Not forwarded by default — add if needed |
 
 ---
 

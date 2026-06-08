@@ -22,7 +22,7 @@ verbose custom solutions.
 
 ## Arguments
 
-- `/fe-refactor <target>` — name a component, directory, or concern (e.g. "sidebar", "form hooks", "client boundary sprawl")
+- `/refactor-code <target>` — name a component, directory, or concern (e.g. "sidebar", "form hooks", "client boundary sprawl")
 - If no argument is given, ask the user what area they want cleaned up.
 
 ---

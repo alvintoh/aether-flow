@@ -18,9 +18,9 @@ before any installation or migration work begins.
 
 ## Arguments
 
-- `/arch-evaluate add <library>` or `/arch-evaluate a <library>` — evaluate adding a new library
-- `/arch-evaluate replace <current> <replacement>` or `/arch-evaluate r <current> <replacement>` — evaluate swapping one tool for another
-- `/arch-evaluate n` — cancel immediately, output "Cancelled." and stop
+- `/evaluate-library add <library>` or `/evaluate-library a <library>` — evaluate adding a new library
+- `/evaluate-library replace <current> <replacement>` or `/evaluate-library r <current> <replacement>` — evaluate swapping one tool for another
+- `/evaluate-library n` — cancel immediately, output "Cancelled." and stop
 - If the mode is omitted, infer it from phrasing: "add/install/use" → `add`, "replace/swap/migrate" → `replace`
 - If arguments are ambiguous, ask the user before proceeding
 

@@ -120,7 +120,7 @@ Key types and schemas across the application. Runtime data validated at system b
 | `src/trpc/routers/workflow.ts`       | `CreateWorkflow` | Input schema for workflow creation   |
 | `src/features/editor/`              | `WorkflowNode`   | Discriminated union of node types    |
 | `src/features/editor/`              | `WorkflowEdge`   | Connection between two nodes         |
-| `prisma/schema.prisma`               | `WorkflowRun`    | Execution record with status + logs  |
+| `src/db/schema.ts`                   | `WorkflowRun`    | Execution record with status + logs  |
 ```
 
 ---

@@ -17,8 +17,8 @@ this skill files issues, it does not investigate deeply (use the `qa` agent for 
 
 ## Arguments
 
-- `/gh-issue <description>` — describe the bug, paste an error, or paste QA findings
-- `/gh-issue` (no args) — auto-detect: pull Chrome console errors and run lint/typecheck
+- `/create-issue <description>` — describe the bug, paste an error, or paste QA findings
+- `/create-issue` (no args) — auto-detect: pull Chrome console errors and run lint/typecheck
 
 ---
 

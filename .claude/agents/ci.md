@@ -40,11 +40,6 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Generate Prisma client   # only if project uses Prisma
-        run: bun --bun run prisma generate
-        env:
-          DATABASE_URL: postgresql://localhost/ci
-
       - name: Typecheck
         run: bunx tsc --noEmit
 
@@ -60,7 +55,6 @@ Rules:
 - Run typecheck before lint — type errors are more fundamental
 - Gate on PRs to `main` only — direct pushes are blocked by branch protection anyway
 - Name the job **exactly** as it appears in branch protection: `Typecheck · Lint · Format`
-- If the project uses Prisma, generate the client before typechecking — `tsc` needs the generated types; pass a syntactically valid `DATABASE_URL` placeholder (Prisma `generate` does not connect to the DB)
 
 ### Adding tests
 

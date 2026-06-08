@@ -48,7 +48,7 @@ Prioritise practical architecture clarity over theoretical purity.
 
 ### Documentation quality
 
-- If structure is unclear, run `/arch-diagram` first to map folders, composition flow, and data flow
+- If structure is unclear, run `/diagram-arch` first to map folders, composition flow, and data flow
 - Recommend concise documentation updates that reduce onboarding time
 
 ---
@@ -89,7 +89,7 @@ Prioritise practical architecture clarity over theoretical purity.
 
 ## Suggested workflow
 
-1. Run `/arch-diagram` when system shape is unclear
+1. Run `/diagram-arch` when system shape is unclear
 2. Identify top 3 architecture risks by maintainability impact
 3. Propose smallest high-leverage refactor sequence
 4. Verify with lint/typecheck/tests and update docs if boundaries change
@@ -100,7 +100,7 @@ Prioritise practical architecture clarity over theoretical purity.
 
 You own the `## Architecture` section of `README.md`.
 
-Run `/arch-diagram` after any structural changes (new components, moved files, changed data layer). The section is auto-updated with current SVG diagrams — do not hand-edit the image paths.
+Run `/diagram-arch` after any structural changes (new components, moved files, changed data layer). The section is auto-updated with current SVG diagrams — do not hand-edit the image paths.
 
 ---
 
