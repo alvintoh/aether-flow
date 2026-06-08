@@ -39,8 +39,8 @@ Run the following in parallel:
 
 **Chrome MCP:**
 ```
-mcp__claude_in_chrome__get_console_logs     — capture errors and warnings
-mcp__claude_in_chrome__get_network_requests — capture failed requests
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages — capture errors and warnings
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests — capture failed requests
 ```
 
 **Static analysis:**

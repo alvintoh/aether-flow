@@ -27,7 +27,7 @@ do not touch them.
 If the task involves a visible UI bug, check Chrome MCP is connected before proceeding:
 
 ```
-mcp__claude_in_chrome__tabs_context_mcp
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages
 ```
 
 If the call fails or the tool is missing, **stop and ask the user** using AskUserQuestion:
@@ -41,8 +41,8 @@ Do NOT silently fall through to static analysis. Wait for the user's choice befo
 If Chrome is connected, capture live diagnostics before reading any code:
 
 ```
-mcp__claude-in-chrome__read_console_messages   — errors, warnings, uncaught exceptions
-mcp__claude-in-chrome__read_network_requests   — failed requests (4xx/5xx, CORS, tRPC)
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages — errors, warnings, uncaught exceptions
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests — failed requests (4xx/5xx, CORS, tRPC)
 ```
 
 If the task is purely a type error, lint error, or logic bug with no visual component, skip this step and go straight to Step 1.
@@ -122,9 +122,9 @@ bunx tsc --noEmit
 
 Then reload the page and confirm via Chrome extension:
 ```
-mcp__claude_in_chrome__navigate_page       — reload to the affected route
-mcp__claude_in_chrome__get_console_logs    — original error must be gone, no new ones
-mcp__claude_in_chrome__get_network_requests — previously failing requests now succeed
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page         — reload to the affected route
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages — original error must be gone, no new ones
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests — previously failing requests now succeed
 ```
 
 If new errors appear that weren't there before the fix, resolve them before reporting done.

@@ -16,8 +16,8 @@ This keeps the review fast and focused on real problems.
 Before any static analysis, capture what the browser is actually reporting:
 
 ```
-mcp__claude_in_chrome__get_console_logs     — errors, warnings, uncaught exceptions
-mcp__claude_in_chrome__get_network_requests — failed requests (tRPC errors, 4xx/5xx, CORS)
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages — errors, warnings, uncaught exceptions
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests — failed requests (tRPC errors, 4xx/5xx, CORS)
 ```
 
 Record these as **[RUNTIME]** findings — they are highest priority because they affect users

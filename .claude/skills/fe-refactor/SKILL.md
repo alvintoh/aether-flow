@@ -179,9 +179,9 @@ lint violations. Do not use `// @ts-ignore` or `// eslint-disable` to suppress e
 Navigate to the page(s) affected by the refactor and confirm no regressions:
 
 ```
-mcp__claude_in_chrome__navigate_page        — reload the affected route
-mcp__claude_in_chrome__get_console_logs     — no new errors or warnings vs before the refactor
-mcp__claude_in_chrome__get_network_requests — no new failed requests
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page         — reload the affected route
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages — no new errors or warnings vs before the refactor
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests — no new failed requests
 ```
 
 The page must render correctly — the refactor must be behaviour-transparent.

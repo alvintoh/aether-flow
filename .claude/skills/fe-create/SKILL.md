@@ -40,7 +40,7 @@ Note which features are present, what theme tokens are available, and how compon
 
 Do **not** read every component. Instead:
 
-1. Glob `src/components/**/*.tsx` and `src/data/*.ts` to see what exists
+1. Glob `src/components/**/*.tsx` and `src/features/**/*.tsx` to see what exists
 2. Read the **2–3 most relevant files** — pick the ones closest to the feature you're building
 3. For specific patterns, use targeted Grep instead of full reads:
    - `"use client"` usage: `Grep pattern='"use client"' glob='src/components/**/*.tsx'`
@@ -58,8 +58,8 @@ State your plan in 3–5 bullet points:
 
 - Which file(s) will be created or modified
 - Where in `src/app/page.tsx` the feature will be inserted (if applicable)
-- Whether a new data file is needed in `src/data/`
-- Whether a new component is needed in `src/components/`
+- Whether a new tRPC procedure or Prisma query is needed
+- Whether the component is feature-scoped (`src/features/<feature>/components/`) or shared (`src/components/`)
 - Whether `"use client"` is required and why (or why not)
 
 Ask the user to confirm if the scope is larger than expected. Otherwise proceed.
@@ -80,17 +80,17 @@ Follow these conventions exactly:
 - Default to Server Components — only add `"use client"` for event handlers, browser APIs, or hooks
 - Push `"use client"` as far down the tree as possible
 - Use `next/image` for all images with explicit `width`, `height`, and `alt`
-- Anchor navigation uses `href="#section-id"` — do not use `next/link` for in-page anchors
-- Match the existing section structure in `page.tsx` (same wrapper elements and spacing)
-
 **Tailwind**
 - Use only tokens defined in `globals.css` for colours — no hardcoded hex values
 - Match spacing scale used in adjacent components
 - Follow existing responsive patterns (check how other components handle mobile vs desktop)
 
 **File placement**
-- New components → `src/components/<FeatureName>.tsx`
-- New data → `src/data/<feature-name>-data.ts`
+- Feature-specific components → `src/features/<feature>/components/<ComponentName>.tsx`
+- Shared components (used by 2+ features) → `src/components/<ComponentName>.tsx`
+- Feature-specific hooks → `src/features/<feature>/hooks/use-<name>.ts`
+- Shared hooks → `src/hooks/use-<name>.ts`
+- Server-side feature code → `src/features/<feature>/server/`
 - No barrel files (`index.ts`) — import directly from the file
 
 **Import ordering** (linter enforced — alphabetical, grouped)
@@ -121,10 +121,10 @@ Fix all lint errors. Resolve all type errors — do not use `// @ts-ignore`.
 Navigate to the page that contains the new feature and check:
 
 ```
-mcp__claude_in_chrome__navigate_page        — go to the route containing the new feature
-mcp__claude_in_chrome__get_console_logs     — must be zero errors or warnings
-mcp__claude_in_chrome__get_network_requests — no failed tRPC calls or image loads
-mcp__claude_in_chrome__take_screenshot      — confirm the feature renders visually
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page         — go to the route containing the new feature
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages — must be zero errors or warnings
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests — no failed tRPC calls or image loads
+mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot       — confirm the feature renders visually
 ```
 
 If console errors appear, diagnose and fix before reporting done.
