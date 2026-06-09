@@ -20,6 +20,19 @@ Prioritise practical architecture clarity over theoretical purity.
 
 ---
 
+## System Layout
+
+This project spans multiple layers. Understand the full picture before reviewing any single layer:
+
+| Directory | Layer | Notes |
+|---|---|---|
+| `src/` | Next.js frontend + BFF | App Router pages, tRPC routers, Drizzle client |
+| `services/hono-api/` | Serverless API (GCP) | Hono — external REST endpoints, webhooks |
+| `services/elysia-executor/` | Container service (GCP) | Elysia — workflow execution engine |
+| `infra/` | IaC | OpenTofu — GCP Cloud Run, Cloud SQL, VPC, IAM |
+
+---
+
 ## What to Evaluate
 
 ### Repository structure
@@ -27,6 +40,8 @@ Prioritise practical architecture clarity over theoretical purity.
 - Is folder layout intuitive and consistent with framework conventions?
 - Are responsibilities clearly separated (`src/app`, `src/components`, `src/data`, `public`)?
 - Are there misplaced files that should move to feature or domain folders?
+- Do `services/` directories each have a clear, single responsibility?
+- Is cross-service coupling explicit (Eden client types) rather than implicit (shared mutable state)?
 
 ### Dependency direction
 
@@ -48,7 +63,7 @@ Prioritise practical architecture clarity over theoretical purity.
 
 ### Documentation quality
 
-- If structure is unclear, run `/diagram-arch` first to map folders, composition flow, and data flow
+- If structure is unclear, run `/arch-diagram` first to map folders, composition flow, and data flow
 - Recommend concise documentation updates that reduce onboarding time
 
 ---
@@ -60,6 +75,8 @@ Prioritise practical architecture clarity over theoretical purity.
 - Keep clear layering: app composition (`src/app`) → UI components (`src/components`) → content/config (`src/data`)
 - Avoid cross-layer leaks (for example, data modules importing UI components)
 - Prefer explicit boundaries over convenience imports
+- Backend services (`services/`) must not import from `src/` — the dependency flows one way: frontend calls services, not the reverse
+- Inter-service calls use Eden client types only — never share a runtime import across service boundaries
 
 ### Dependency hygiene
 
@@ -89,7 +106,7 @@ Prioritise practical architecture clarity over theoretical purity.
 
 ## Suggested workflow
 
-1. Run `/diagram-arch` when system shape is unclear
+1. Run `/arch-diagram` when system shape is unclear
 2. Identify top 3 architecture risks by maintainability impact
 3. Propose smallest high-leverage refactor sequence
 4. Verify with lint/typecheck/tests and update docs if boundaries change
@@ -100,7 +117,7 @@ Prioritise practical architecture clarity over theoretical purity.
 
 You own the `## Architecture` section of `README.md`.
 
-Run `/diagram-arch` after any structural changes (new components, moved files, changed data layer). The section is auto-updated with current SVG diagrams — do not hand-edit the image paths.
+Run `/arch-diagram` after any structural changes (new components, moved files, changed data layer). The section is auto-updated with current SVG diagrams — do not hand-edit the image paths.
 
 ---
 

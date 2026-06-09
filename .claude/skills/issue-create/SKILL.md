@@ -1,5 +1,5 @@
 ---
-name: create-issue
+name: issue-create
 description: >
   Create a structured GitHub issue from a bug description, stakeholder report, QA findings, or live
   browser errors. Runs lightweight analysis if no input is given. Labels and
@@ -17,8 +17,8 @@ this skill files issues, it does not investigate deeply (use the `qa` agent for 
 
 ## Arguments
 
-- `/create-issue <description>` — describe the bug, paste an error, or paste QA findings
-- `/create-issue` (no args) — auto-detect: pull Chrome console errors and run lint/typecheck
+- `/issue-create <description>` — describe the bug, paste an error, or paste QA findings
+- `/issue-create` (no args) — auto-detect: pull Chrome console errors and run lint/typecheck
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: fix-bug
+name: bug-fix
 description: >
   Surgically fix a specific frontend bug or error. Takes an optional bug description,
   file path, or error message as input. Captures live Chrome console logs first,
@@ -17,7 +17,7 @@ do not touch them.
 
 ## Arguments
 
-- `/fix-bug <description>` — describe the bug, paste an error, or name the file
+- `/bug-fix <description>` — describe the bug, paste an error, or name the file
 - If no argument is given, capture Chrome logs and run lint/typecheck, fix what they report.
 
 ---
@@ -33,7 +33,7 @@ mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages
 If the call fails or the tool is missing, **stop and ask the user** using AskUserQuestion:
 
 > Chrome MCP isn't connected. How would you like to proceed?
-> - **Restart with Chrome** — exit and relaunch from PowerShell using the `claude` alias (which adds `--chrome` automatically), then run `/fix-bug` again.
+> - **Restart with Chrome** — exit and relaunch from PowerShell using the `claude` alias (which adds `--chrome` automatically), then run `/bug-fix` again.
 > - **Continue with static analysis only** — skip live diagnostics and rely on lint + typecheck. May miss runtime/visual bugs.
 
 Do NOT silently fall through to static analysis. Wait for the user's choice before proceeding.

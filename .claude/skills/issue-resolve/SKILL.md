@@ -1,5 +1,5 @@
 ---
-name: resolve-issue
+name: issue-resolve
 description: >
   Resolve a GitHub issue end-to-end: list open issues, pick one, read it, locate
   the relevant code, apply the minimum fix, commit referencing the issue, then
@@ -14,8 +14,8 @@ Pick a GitHub issue, fix it, and ship it — push directly or open a PR.
 
 ## Arguments
 
-- `/resolve-issue <number>` — skip the list, go straight to that issue
-- `/resolve-issue` (no args) — show open issues and let the user pick
+- `/issue-resolve <number>` — skip the list, go straight to that issue
+- `/issue-resolve` (no args) — show open issues and let the user pick
 
 ---
 

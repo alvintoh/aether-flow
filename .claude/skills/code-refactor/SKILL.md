@@ -1,5 +1,5 @@
 ---
-name: refactor-code
+name: code-refactor
 description: >
   Refactor a frontend area for structure, readability, maintainability, and code
   reduction — no behaviour changes. Takes an optional target (component, directory,
@@ -22,7 +22,7 @@ verbose custom solutions.
 
 ## Arguments
 
-- `/refactor-code <target>` — name a component, directory, or concern (e.g. "sidebar", "form hooks", "client boundary sprawl")
+- `/code-refactor <target>` — name a component, directory, or concern (e.g. "sidebar", "form hooks", "client boundary sprawl")
 - If no argument is given, ask the user what area they want cleaned up.
 
 ---

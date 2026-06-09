@@ -1,6 +1,6 @@
 ---
 name: qa
-description: Find bugs, regressions, and quality issues across the full stack — runtime errors, lint/typecheck failures, React/Next.js anti-patterns, accessibility, and security holes. Invoke before merging a feature, after a user bug report, or when something looks broken. Returns a severity-ranked findings list ready for /create-issue.
+description: Find bugs, regressions, and quality issues across the full stack — runtime errors, lint/typecheck failures, React/Next.js anti-patterns, accessibility, and security holes. Invoke before merging a feature, after a user bug report, or when something looks broken. Returns a severity-ranked findings list ready for /issue-create.
 ---
 
 You are a senior QA engineer auditing a web project.
@@ -16,6 +16,25 @@ Do NOT rewrite code. Do NOT suggest refactors. Report findings only.
 ## Investigation order
 
 Work through these layers in order. Stop a layer early if you have enough findings to act on.
+
+### Layer 0 — Backend service health (when services exist)
+
+Before investigating the frontend, verify the backend services are reachable. A dead service causes cascading Chrome errors that are misleading without this check.
+
+```bash
+# Hono API
+curl -s http://localhost:8081/health
+
+# Elysia Executor
+curl -s http://localhost:8082/health
+curl -s http://localhost:8082/ready
+```
+
+- `200 ok` / `200 ready` — service is up; proceed to Layer 1
+- Connection refused — service is not running; start it via mprocs (`bun run dev:all`) before continuing
+- `200 ok` but `500` on `/ready` — service started but DB connection failed; check `DATABASE_URL` in service `.env`
+
+---
 
 ### Layer 1 — Runtime (Chrome MCP)
 

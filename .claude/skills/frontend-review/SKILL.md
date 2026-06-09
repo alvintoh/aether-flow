@@ -1,5 +1,5 @@
 ---
-name: review-frontend
+name: frontend-review
 description: Review all frontend components in src/app/ and src/features/ against TypeScript, React, Next.js App Router, performance, accessibility, and security best practices. Captures Chrome console errors first, runs lint and typecheck, then Grep-first pattern matching before reading files — returns a prioritised findings list.
 ---
 

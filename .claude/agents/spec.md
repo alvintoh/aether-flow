@@ -82,16 +82,6 @@ export type Workflow = z.infer<typeof workflowSchema>;
 
 ---
 
-## gRPC / Protobuf (when applicable)
-
-- Define messages with explicit field numbers and types — never skip field numbers
-- Use `optional` vs `required` deliberately — Protobuf 3 treats everything as optional by default
-- Pair `.proto` definitions with generated TypeScript types in a `gen/` folder (DO NOT EDIT manually)
-- Use `buf` for schema linting and breaking-change detection in CI
-- Prefer `google.protobuf.Timestamp` over custom date strings for time fields
-
----
-
 ## Breaking Change Detection
 
 - Any change that removes a field, narrows a type, or renames a field is breaking

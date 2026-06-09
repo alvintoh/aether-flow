@@ -1,5 +1,5 @@
 ---
-name: diagram-arch
+name: arch-diagram
 description: >
   Generate Excalidraw architecture diagrams for the current repository.
   Use when the user asks to "diagram the architecture", "map project structure",
@@ -15,10 +15,10 @@ Generate Excalidraw diagrams, export SVGs, and update `README.md` in one run.
 
 ## Arguments
 
-- `/diagram-arch all` — All 3 diagrams (default if no arg given)
-- `/diagram-arch structure` — Folder structure only
-- `/diagram-arch dataflow` — Data flow only
-- `/diagram-arch architecture` — System architecture only
+- `/arch-diagram all` — All 3 diagrams (default if no arg given)
+- `/arch-diagram structure` — Folder structure only
+- `/arch-diagram dataflow` — Data flow only
+- `/arch-diagram architecture` — System architecture only
 
 ---
 

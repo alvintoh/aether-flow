@@ -1,5 +1,5 @@
 ---
-name: assemble-docs
+name: docs-assemble
 description: >
   Orchestrate all contributing agents to assemble a complete, best-practices README.md.
   Use when README.md needs a full refresh or first-time assembly.
@@ -184,12 +184,12 @@ Section changes detected:
 
 ## Step 3: Regenerate diagrams if needed
 
-Run `/diagram-arch` now (before dispatching section agents) if **either** condition is true:
+Run `/arch-diagram` now (before dispatching section agents) if **either** condition is true:
 
 - Any of the three SVGs from Step 1 are absent, **or**
 - The `architecture` section is marked **CHANGED** in Step 2
 
-The `diagram-arch` skill has its own component drift check and will skip individual
+The `arch-diagram` skill has its own component drift check and will skip individual
 diagrams that are already up to date — so calling it on every architecture change is safe.
 This ensures `docs/diagrams/*.excalidraw` and `docs/diagrams/*.svg` stay in sync with each other
 and with the assembled README.
@@ -239,7 +239,7 @@ The section must:
 - Include a Key layers table (layer, path, description)
 - Note the tRPC + React Query data fetching pattern
 - Include diagram image embeds only if the SVG files exist
-- End with: Run `/diagram-arch` in Claude Code to regenerate these diagrams if the structure changes.
+- End with: Run `/arch-diagram` in Claude Code to regenerate these diagrams if the structure changes.
 
 Return the markdown section only. Start with `## Architecture`.
 ```
@@ -445,5 +445,5 @@ The `"project"` field is what the relevance check in Step 0 reads on the next ru
 Report:
 - Whether Discovery ran (new project detected) or was skipped (same project)
 - Which sections were regenerated vs. skipped
-- Whether `/diagram-arch` was triggered
+- Whether `/arch-diagram` was triggered
 - Any assumptions made during Discovery

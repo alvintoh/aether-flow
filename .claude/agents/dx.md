@@ -57,11 +57,33 @@ Rules:
 
 ### Ports
 
-| Port | Service       | Notes                             |
-|------|---------------|-----------------------------------|
-| 3000 | Next.js       | Auto-opens in browser             |
-| 8288 | Inngest dev   | Silent auto-forward               |
-| 4983 | Drizzle Studio | Not forwarded by default — add if needed |
+| Port | Service          | Notes                                        |
+|------|------------------|----------------------------------------------|
+| 3000 | Next.js          | Auto-opens in browser                        |
+| 8081 | Hono API         | Serverless API service (local dev)           |
+| 8082 | Elysia Executor  | Container service (local dev)                |
+| 8288 | Inngest dev      | Silent auto-forward                          |
+| 4983 | Drizzle Studio   | Not forwarded by default — add if needed     |
+
+### Adding backend services to mprocs
+
+When `services/hono-api` or `services/elysia-executor` exist, add them to `mprocs.yaml`:
+
+```yaml
+hono-api:
+  cmd: ["bun", "run", "--watch", "src/index.ts"]
+  cwd: services/hono-api
+  env:
+    PORT: "8081"
+
+elysia-executor:
+  cmd: ["bun", "run", "--watch", "src/index.ts"]
+  cwd: services/elysia-executor
+  env:
+    PORT: "8082"
+```
+
+Each service needs its own `.env` file in its directory. The root `.env` covers Next.js; service `.env` files cover service-specific vars (`DATABASE_URL`, `JWT_SECRET`, etc.).
 
 ---
 

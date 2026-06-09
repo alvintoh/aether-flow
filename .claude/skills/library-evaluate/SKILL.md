@@ -1,5 +1,5 @@
 ---
-name: evaluate-library
+name: library-evaluate
 description: >
   Evaluate whether adding a new library or replacing an existing tool is
   architecturally sound for this project. Covers compatibility, overlap,
@@ -18,9 +18,9 @@ before any installation or migration work begins.
 
 ## Arguments
 
-- `/evaluate-library add <library>` or `/evaluate-library a <library>` — evaluate adding a new library
-- `/evaluate-library replace <current> <replacement>` or `/evaluate-library r <current> <replacement>` — evaluate swapping one tool for another
-- `/evaluate-library n` — cancel immediately, output "Cancelled." and stop
+- `/library-evaluate add <library>` or `/library-evaluate a <library>` — evaluate adding a new library
+- `/library-evaluate replace <current> <replacement>` or `/library-evaluate r <current> <replacement>` — evaluate swapping one tool for another
+- `/library-evaluate n` — cancel immediately, output "Cancelled." and stop
 - If the mode is omitted, infer it from phrasing: "add/install/use" → `add`, "replace/swap/migrate" → `replace`
 - If arguments are ambiguous, ask the user before proceeding
 

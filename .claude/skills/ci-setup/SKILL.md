@@ -1,5 +1,5 @@
 ---
-name: setup-ci
+name: ci-setup
 description: Bootstrap the full quality pipeline from scratch — GitHub Actions CI workflow, Lefthook pre-commit/pre-push hooks, structure-check script, branch protection, and CodeRabbit. Idempotent — safe to run on an already-configured project.
 ---
 
@@ -28,7 +28,7 @@ If `gh auth status` fails, stop and tell the user:
 ```
 gh is not authenticated. Run:
   gh auth login
-Then re-run /setup-ci.
+Then re-run /ci-setup.
 ```
 
 If there is no git remote, warn but continue — branch protection will be skipped.

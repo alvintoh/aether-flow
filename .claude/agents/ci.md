@@ -251,6 +251,67 @@ Strict mode is non-negotiable:
 
 ---
 
+## Backend Services Deployment
+
+Add a `deploy` job to the same workflow file. It runs only on `main`, after the `ci` job passes, and handles Docker build → push to Artifact Registry → `tofu apply`.
+
+```yaml
+  deploy:
+    name: Build · Push · Deploy
+    runs-on: ubuntu-latest
+    needs: ci
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push hono-api
+        run: |
+          IMAGE="${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/services/hono-api:${{ github.sha }}"
+          docker build -t "$IMAGE" ./services/hono-api
+          docker push "$IMAGE"
+
+      - name: Build and push elysia-executor
+        run: |
+          IMAGE="${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/services/elysia-executor:${{ github.sha }}"
+          docker build -t "$IMAGE" ./services/elysia-executor
+          docker push "$IMAGE"
+
+      - uses: opentofu/setup-opentofu@v1
+
+      - name: Apply infrastructure
+        working-directory: infra
+        run: |
+          tofu init
+          tofu apply -auto-approve -var="image_tag=${{ github.sha }}"
+        env:
+          TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
+          TF_VAR_region: ${{ vars.GCP_REGION }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+```
+
+Required GitHub secrets and variables:
+
+| Key | Type | Value |
+|---|---|---|
+| `GCP_SA_KEY` | Secret | JSON key for a service account with Cloud Run Admin, Storage Admin, Artifact Registry Writer roles |
+| `GCP_PROJECT_ID` | Variable | GCP project ID |
+| `GCP_REGION` | Variable | e.g. `asia-southeast1` |
+
+Rules:
+- Always tag images with `${{ github.sha }}` — never `latest`; makes rollbacks deterministic
+- `tofu apply -auto-approve` only on `main` — PRs should only run `tofu plan` (add as a separate PR job)
+- The `deploy` job must `need: ci` — never deploy code that failed typecheck or lint
+
+---
+
 ## What CI Does NOT Own
 
 Hand these to the DevOps agent:
