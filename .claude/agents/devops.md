@@ -325,6 +325,14 @@ resource "google_cloud_run_v2_service" "elysia_executor" {
 
   ingress = "INGRESS_TRAFFIC_INTERNAL_ONLY"
 }
+
+resource "google_cloud_run_v2_service_iam_member" "elysia_invoker" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.elysia_executor.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_service_account.cloud_run_sa.email}"
+}
 ```
 
 ### `outputs.tf`
@@ -352,6 +360,35 @@ output "artifact_registry" {
 - Run `tofu plan` on PRs, `tofu apply` only on `main` after CI passes
 - Store all sensitive values (passwords, connection strings) in Secret Manager — never in state outputs or env var literals
 - `deletion_protection = true` on Cloud SQL — it prevents accidental `tofu destroy` from wiping production data
+
+---
+
+## Cloud Run — Serverless vs Container Mode
+
+Cloud Run is **one product with two operating modes** — not two separate services. The difference is purely in scaling config, not the resource type. Both use `google_cloud_run_v2_service`, the same Dockerfile, and the same Artifact Registry pipeline.
+
+| Mode | Service | Behaviour | AWS equivalent |
+|---|---|---|---|
+| Serverless | Hono | Scales to zero, cold starts possible, pay per request | Lambda |
+| Container | Elysia | Always warm, CPU always allocated, pay for reserved instances | ECS/Fargate |
+
+The two knobs that differentiate them:
+
+```hcl
+# Serverless (Hono) — scales to zero
+scaling { min_instance_count = 0 }
+containers {
+  resources { cpu_idle = true }
+}
+
+# Container (Elysia) — always warm
+scaling { min_instance_count = 1 }
+containers {
+  resources { cpu_idle = false }
+}
+```
+
+Hono is for external REST API and webhooks — bursty, irregular traffic that should scale to zero between bursts. Elysia is for internal services and queue processing — must be warm when a message arrives.
 
 ---
 
@@ -396,6 +433,62 @@ const securityHeaders = [
 - **Cloud Logging**: structured JSON logs from Cloud Run are auto-ingested — query in Log Explorer
 - **Vercel Analytics**: Core Web Vitals per route (LCP < 2.5s, CLS < 0.1, INP < 200ms)
 - Set alerts on: 5xx error rate spikes, Cloud Run instance count anomalies, Cloud SQL CPU > 80%
+
+---
+
+## Pub/Sub — Event Fan-out to Cloud Run
+
+Route Pub/Sub push subscriptions based on work type — never route queue processing to Hono serverless, cold starts cause Pub/Sub to retry and produce duplicate processing.
+
+| Work type | Route to | Why |
+|---|---|---|
+| Workflow execution, DB writes, heavy processing | Elysia container | Always warm — no cold start on message arrival |
+| Webhook delivery, external API calls, notifications | Hono serverless | Stateless, short-lived, scales to zero between bursts |
+
+Add `pubsub.googleapis.com` to `local.enabled_apis`.
+
+```hcl
+resource "google_pubsub_topic" "workflow_events" {
+  name       = "workflow-events"
+  depends_on = [google_project_service.apis]
+}
+
+# Heavy processing → Elysia container (always warm)
+resource "google_pubsub_subscription" "workflow_execute" {
+  name  = "workflow-execute-sub"
+  topic = google_pubsub_topic.workflow_events.name
+
+  push_config {
+    push_endpoint = "${google_cloud_run_v2_service.elysia_executor.uri}/pubsub/execute"
+    oidc_token {
+      service_account_email = google_service_account.cloud_run_sa.email
+    }
+  }
+
+  ack_deadline_seconds = 60
+  retry_policy {
+    minimum_backoff = "10s"
+    maximum_backoff = "300s"
+  }
+}
+
+# Lightweight work → Hono serverless
+resource "google_pubsub_subscription" "workflow_notify" {
+  name  = "workflow-notify-sub"
+  topic = google_pubsub_topic.workflow_events.name
+
+  push_config {
+    push_endpoint = "${google_cloud_run_v2_service.hono_api.uri}/pubsub/notify"
+    oidc_token {
+      service_account_email = google_service_account.cloud_run_sa.email
+    }
+  }
+
+  ack_deadline_seconds = 30
+}
+```
+
+Push subscriptions authenticate against Cloud Run via OIDC tokens — the `roles/run.invoker` IAM binding on each service is required for delivery to succeed.
 
 ---
 

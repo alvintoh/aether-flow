@@ -208,7 +208,7 @@ const app = new Elysia()
       response: t.Object({ runId: t.String() }),
     }
   )
-  .listen(3001);
+  .listen(parseInt(process.env.PORT ?? "8080"));
 
 export type App = typeof app;
 ```

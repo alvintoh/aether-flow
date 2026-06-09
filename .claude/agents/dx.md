@@ -75,15 +75,183 @@ hono-api:
   cwd: services/hono-api
   env:
     PORT: "8081"
+    PUBSUB_EMULATOR_HOST: "localhost:8085"
 
 elysia-executor:
   cmd: ["bun", "run", "--watch", "src/index.ts"]
   cwd: services/elysia-executor
   env:
     PORT: "8082"
+    PUBSUB_EMULATOR_HOST: "localhost:8085"
+
+pubsub-emulator:
+  cmd: gcloud beta emulators pubsub start --project=local-project --host-port=localhost:8085
 ```
 
 Each service needs its own `.env` file in its directory. The root `.env` covers Next.js; service `.env` files cover service-specific vars (`DATABASE_URL`, `JWT_SECRET`, etc.).
+
+Run `bun pubsub:setup` once after starting mprocs to create local topics and push subscriptions (see pull-secrets section below).
+
+---
+
+## Local GCP Tooling
+
+### Prerequisites — one-time machine setup
+
+```bash
+# Authenticate as yourself — replaces service account key files for local dev
+gcloud auth application-default login
+
+# Set your project so SDKs resolve it automatically
+gcloud config set project YOUR_PROJECT_ID
+export GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID  # add to shell profile
+```
+
+All GCP SDK calls (Pub/Sub client, Secret Manager client, Cloud SQL Auth Proxy) use ADC automatically. No JSON key files needed locally.
+
+### Cloud SQL Auth Proxy — local → real Cloud SQL
+
+Use when you need to test against staging/production Cloud SQL data. The proxy authenticates via ADC — no credentials to manage.
+
+```bash
+# Install
+gcloud components install cloud-sql-proxy
+
+# Run (add to mprocs when needed)
+cloud-sql-proxy --port 5432 PROJECT:REGION:INSTANCE
+```
+
+Point local `.env` at `localhost:5432` — the app doesn't know it's proxied.
+
+### Pub/Sub emulator — local messaging
+
+The emulator is auto-detected by the official `@google-cloud/pubsub` client when `PUBSUB_EMULATOR_HOST` is set. No code changes needed — the same client works against both the emulator and real Pub/Sub.
+
+Create topics and push subscriptions once after starting the emulator:
+
+```ts
+// scripts/setup-local-pubsub.ts
+import { PubSub } from "@google-cloud/pubsub";
+
+const client = new PubSub({ projectId: "local-project" });
+
+await client.createTopic("workflow-events");
+await client.topic("workflow-events").createSubscription("workflow-execute-sub", {
+  pushConfig: { pushEndpoint: "http://localhost:8082/pubsub/execute" },
+});
+await client.topic("workflow-events").createSubscription("workflow-notify-sub", {
+  pushConfig: { pushEndpoint: "http://localhost:8081/pubsub/notify" },
+});
+
+console.log("Local Pub/Sub topics and subscriptions created");
+```
+
+```json
+"pubsub:setup": "bun scripts/setup-local-pubsub.ts"
+```
+
+### Secret Manager — pull-secrets script
+
+GCP Secret Manager has no local emulator. Use a script that fetches secrets via ADC and writes a gitignored `.env.local`. Engineers run this once after cloning or when secrets rotate.
+
+```ts
+// scripts/pull-secrets.ts
+import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
+import { writeFileSync } from "fs";
+
+const PROJECT = process.env.GOOGLE_CLOUD_PROJECT!;
+const client = new SecretManagerServiceClient();
+
+const SECRETS: Record<string, string> = {
+  DATABASE_URL:   "database-url",
+  JWT_SECRET:     "jwt-secret",
+  ALLOWED_ORIGIN: "allowed-origin",
+};
+
+async function pull(env: "dev" | "prod" = "dev") {
+  const lines: string[] = [];
+  for (const [envKey, secretId] of Object.entries(SECRETS)) {
+    const name = `projects/${PROJECT}/secrets/${secretId}-${env}/versions/latest`;
+    const [version] = await client.accessSecretVersion({ name });
+    lines.push(`${envKey}=${version.payload?.data?.toString() ?? ""}`);
+  }
+  writeFileSync(".env.local", lines.join("\n"));
+  console.log("Secrets written to .env.local");
+}
+
+pull((process.argv[2] as "dev" | "prod") ?? "dev");
+```
+
+```json
+"secrets:pull": "bun scripts/pull-secrets.ts dev",
+"secrets:pull:prod": "bun scripts/pull-secrets.ts prod"
+```
+
+Add `.env.local` to `.gitignore`.
+
+### Docker Compose — test the actual container image
+
+`bun --watch` is for the inner dev loop. Use Docker Compose before pushing to verify the built image works end-to-end — Dockerfile bugs only surface here.
+
+```yaml
+# docker-compose.yml
+services:
+  hono:
+    build: ./services/hono-api
+    ports: ["8081:8080"]
+    environment:
+      PORT: "8080"
+      DATABASE_URL: postgresql://app:dev@postgres:5432/aether_flow
+      ALLOWED_ORIGIN: http://localhost:3000
+
+  elysia:
+    build: ./services/elysia-executor
+    ports: ["8082:8080"]
+    environment:
+      PORT: "8080"
+      DATABASE_URL: postgresql://app:dev@postgres:5432/aether_flow
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 10s
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: aether_flow
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+
+volumes:
+  pgdata:
+```
+
+### Testcontainers — real Postgres for integration tests
+
+Spins up a real Postgres container per test run via `@testcontainers/postgresql`. Catches real query bugs that mocks miss. Works with Bun's test runner.
+
+```ts
+import { PostgreSqlContainer } from "@testcontainers/postgresql";
+import { drizzle } from "drizzle-orm/node-postgres";
+import * as schema from "@/db/schema";
+
+const container = await new PostgreSqlContainer("postgres:16-alpine").start();
+const db = drizzle(container.getConnectionUri(), { schema });
+// run migrations, test queries, then:
+await container.stop();
+```
+
+### Tool summary
+
+| Goal | Tool | When |
+|---|---|---|
+| Fast inner dev loop | `mprocs` + `bun --watch` | Always |
+| Test actual Docker image | `docker compose up --build` | Before pushing |
+| Local → Cloud SQL staging | Cloud SQL Auth Proxy + ADC | When testing against real data |
+| Local Pub/Sub | Pub/Sub emulator + `pubsub:setup` | When building event-driven features |
+| Fetch real secrets locally | `bun secrets:pull` | After clone or secret rotation |
+| Integration tests | Testcontainers | CI and local test runs |
 
 ---
 
