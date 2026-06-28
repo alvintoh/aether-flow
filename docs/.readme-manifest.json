@@ -12,7 +12,7 @@
     },
     "data-contracts": {
       "hash": "7c83a36bbad1cd2f2c907af4a803435b455901fe",
-      "files": ["prisma/"]
+      "files": ["src/db/schema.ts", "drizzle.config.ts"]
     },
     "design-system": {
       "hash": "5e3a24bf823bbed2b8ed77fb00114f467a1b630a",

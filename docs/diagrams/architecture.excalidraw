@@ -74,7 +74,7 @@
     {"type":"text","x":882,"y":288,"width":155,"height":16,"text":"Observability · errors","fontSize":11,"strokeColor":"#555","textAlign":"center","fontFamily":3,"opacity":100},
     {"type":"ellipse","x":540,"y":576,"width":145,"height":64,"backgroundColor":"#c3fae8","strokeColor":"#0c8599","strokeWidth":2,"opacity":100,"roughness":0},
     {"type":"text","x":540,"y":588,"width":145,"height":19,"text":"PostgreSQL","fontSize":13,"strokeColor":"#1e1e2e","textAlign":"center","fontFamily":3,"opacity":100},
-    {"type":"text","x":540,"y":608,"width":145,"height":16,"text":"Prisma 7 · adapter-pg","fontSize":11,"strokeColor":"#555","textAlign":"center","fontFamily":3,"opacity":100},
+    {"type":"text","x":540,"y":608,"width":145,"height":16,"text":"Drizzle ORM · node-postgres","fontSize":11,"strokeColor":"#555","textAlign":"center","fontFamily":3,"opacity":100},
     {"type":"arrow","x":197,"y":142,"points":[[0,0],[40,0]],"strokeColor":"#888","strokeWidth":2,"roughness":0,"opacity":100},
     {"type":"arrow","x":197,"y":214,"points":[[0,0],[0,-36],[340,-36],[340,-72]],"strokeColor":"#1971c2","strokeWidth":2,"roughness":0,"opacity":100},
     {"type":"arrow","x":497,"y":286,"points":[[0,0],[20,0],[20,-144],[40,-144]],"strokeColor":"#2f9e44","strokeWidth":2,"roughness":0,"opacity":100},

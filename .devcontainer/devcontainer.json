@@ -3,7 +3,7 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "postCreateCommand": "bun install && bun --bun run prisma generate",
+  "postCreateCommand": "bun install",
   "containerEnv": {
     "INNGEST_DEV": "1"
   },
@@ -24,7 +24,6 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "Prisma.prisma",
         "bradlc.vscode-tailwindcss",
         "ms-vscode.vscode-typescript-next",
         "oxc.oxc-vscode"

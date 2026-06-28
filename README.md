@@ -8,9 +8,9 @@ AI-powered workflow automation platform — build, run, and observe multi-step A
 
 ## Overview
 
-Aether Flow is an early-stage workflow automation platform where users compose and execute multi-step AI jobs across Google, OpenAI, and Anthropic. Auth and workflow state are persisted in PostgreSQL via Prisma. Long-running AI executions are offloaded to Inngest background jobs, keeping the HTTP layer fast and giving each run full observability and retry support. The API surface is fully typed end-to-end via tRPC v11. Subscriptions and billing are handled by Polar.
+Aether Flow is an early-stage workflow automation platform where users compose and execute multi-step AI jobs across Google, OpenAI, and Anthropic. Auth and workflow state are persisted in PostgreSQL via Drizzle ORM. Long-running AI executions are offloaded to Inngest background jobs, keeping the HTTP layer fast and giving each run full observability and retry support. The API surface is fully typed end-to-end via tRPC v11. Subscriptions and billing are handled by Polar.
 
-**Stack:** Next.js 16 · React 19 · TypeScript · tRPC v11 · Prisma 7 · better-auth · Polar · Inngest · Tailwind CSS v4 · shadcn/ui
+**Stack:** Next.js 16 · React 19 · TypeScript · tRPC v11 · Drizzle ORM · better-auth · Polar · Inngest · Tailwind CSS v4 · shadcn/ui
 
 ---
 
@@ -32,8 +32,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `bun lint:fix` | Auto-fix lint errors |
 | `bun format` | Format all files with oxfmt |
 | `bun format:check` | Check formatting without writing |
-| `bun --bun run prisma generate` | Regenerate Prisma client |
-| `bun --bun run prisma migrate dev` | Run database migrations |
+| `bun drizzle-kit generate` | Generate SQL migrations from the schema |
+| `bun drizzle-kit migrate` | Apply pending migrations |
 | `bun inngest:dev` | Start Inngest dev server |
 
 ---
@@ -97,11 +97,11 @@ Run `/arch-diagram` in Claude Code to regenerate these diagrams if the component
 
 ## Data contracts & schemas
 
-### Database schema (`prisma/schema.prisma`)
+### Database schema (`src/db/schema.ts`)
 
-The PostgreSQL schema is managed by Prisma 7. The Prisma client is generated to `src/generated/prisma/` — import from `@/generated/prisma/client`, not `@prisma/client`.
+The PostgreSQL schema is defined with Drizzle ORM in `src/db/schema.ts`. Import the typed client as `db` from `@/lib/db`, and tables/types from `@/db/schema`.
 
-| Model | Managed by | Description |
+| Table | Managed by | Description |
 |-------|-----------|-------------|
 | `User` | better-auth | Auth identity — id, name, email, emailVerified, image |
 | `Session` | better-auth | Active sessions with expiry and token |

@@ -163,7 +163,7 @@
   <tspan x="624.5" y="609.7">PostgreSQL</tspan>
 </text>
 <text text-anchor="middle" fill="#555" font-size="11" font-weight="400" font-family="inherit">
-  <tspan x="624.5" y="627.9">Prisma 7 · adapter-pg</tspan>
+  <tspan x="624.5" y="627.9">Drizzle ORM · node-postgres</tspan>
 </text>
 <polyline points="209,152 249,152" fill="none" stroke="#888" stroke-width="2" marker-end="url(#ah)"/>
 <polyline points="209,224 209,188 549,188 549,152" fill="none" stroke="#1971c2" stroke-width="2" marker-end="url(#ah)"/>

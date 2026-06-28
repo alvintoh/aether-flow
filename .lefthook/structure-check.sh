@@ -17,7 +17,7 @@ check_file() {
 
   # --- Hard block: generated files must never be manually staged ---
   if [[ "$file" =~ ^src/generated/ ]]; then
-    ERRORS+=("$file — generated files must never be manually staged (run 'bun --bun run prisma generate' instead)")
+    ERRORS+=("$file — generated files must never be manually staged")
     return
   fi
 
