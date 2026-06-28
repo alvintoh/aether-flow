@@ -2,7 +2,7 @@
 
 AI-powered workflow automation platform — build, run, and observe multi-step AI workflows across multiple providers.
 
-[Architecture](docs/diagrams/architecture.svg)
+[Architecture](#architecture)
 
 ---
 
@@ -42,7 +42,48 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 Aether Flow is a Next.js 16 App Router application organised into three layers: route-level page shells in `src/app/`, feature modules in `src/features/`, and shared primitives in `src/components/`, `src/hooks/`, and `src/lib/`. The backend API is tRPC v11 served at `/api/trpc`, with auth at `/api/auth` (better-auth) and background jobs at `/api/inngest` (Inngest).
 
-![Architecture diagram](docs/diagrams/architecture.svg)
+### System architecture
+
+```mermaid
+%%{init: {'flowchart':{'htmlLabels':false,'padding':16,'nodeSpacing':55,'rankSpacing':80,'curve':'basis','subGraphTitleMargin':{'top':14,'bottom':8}},'theme':'base','themeVariables':{'darkMode':true,'background':'#0d1220','fontSize':'15px','primaryColor':'#0c2a44','primaryBorderColor':'#38bdf8','primaryTextColor':'#eaf2fb','lineColor':'#8b95ad','clusterBkg':'#141a2a','clusterBorder':'#2a3346','clusterTextColor':'#c3ccdc','edgeLabelBackground':'#0d1220'}}}%%
+flowchart TB
+  classDef accent fill:#07382b,stroke:#34d399,color:#6ee7b7
+  classDef app fill:#0c2a44,stroke:#38bdf8,color:#bae6fd
+  classDef data fill:#2a1d52,stroke:#a78bfa,color:#ddd6fe
+  classDef external fill:#1c2230,stroke:#64748b,color:#cbd5e1
+  subgraph Browser
+    UI["Next.js UI"]
+  end
+  subgraph Server["Next.js Server"]
+    direction LR
+    RSC["Server Components"]
+    TRPC["tRPC"]
+    AUTH["better-auth"]
+    JOBS["Inngest"]
+  end
+  subgraph Data
+    direction LR
+    ORM["Drizzle"]
+    PG[("PostgreSQL")]
+  end
+  AI["AI providers"]
+  POLAR["Polar"]
+  SENTRY["Sentry"]
+  UI --> RSC
+  UI -->|HTTP| TRPC
+  UI --> AUTH
+  TRPC --> ORM
+  AUTH --> ORM
+  ORM --> PG
+  TRPC -. enqueue .-> JOBS
+  JOBS -->|AI SDK| AI
+  AUTH <--> POLAR
+  RSC -.-> SENTRY
+  class UI accent
+  class RSC,TRPC,AUTH,JOBS app
+  class ORM,PG data
+  class AI,POLAR,SENTRY external
+```
 
 ### Pages
 
@@ -87,11 +128,50 @@ Aether Flow is a Next.js 16 App Router application organised into three layers: 
 | `app-sidebar.tsx` | Collapsible sidebar navigation |
 | `ui/` | shadcn/ui primitives (radix-nova style) — do not hand-create files here |
 
-![Data flow diagram](docs/diagrams/dataflow.svg)
+### Data flow
 
-![Structure diagram](docs/diagrams/structure.svg)
+```mermaid
+%%{init: {'flowchart':{'htmlLabels':false,'padding':22,'nodeSpacing':70,'rankSpacing':110,'curve':'basis'},'theme':'base','themeVariables':{'darkMode':true,'background':'#0d1220','fontSize':'15px','primaryColor':'#0c2a44','primaryBorderColor':'#38bdf8','primaryTextColor':'#eaf2fb','lineColor':'#8b95ad','edgeLabelBackground':'#0d1220'}}}%%
+flowchart LR
+  classDef accent fill:#07382b,stroke:#34d399,color:#6ee7b7
+  classDef app fill:#0c2a44,stroke:#38bdf8,color:#bae6fd
+  classDef data fill:#2a1d52,stroke:#a78bfa,color:#ddd6fe
+  B["Browser"]:::accent
+  N["Next.js server"]:::app
+  A["tRPC API"]:::app
+  O["Drizzle ORM"]:::data
+  P[("PostgreSQL")]:::data
+  B -->|user action| N
+  N -->|tRPC call| A
+  A -->|query| O
+  O -->|SQL| P
+  P -.->|response · rendered UI| B
+```
 
-Run `/arch-diagram` in Claude Code to regenerate these diagrams if the component structure changes.
+### Folder structure
+
+```mermaid
+%%{init: {'flowchart':{'htmlLabels':false,'padding':14,'nodeSpacing':45,'rankSpacing':60},'theme':'base','themeVariables':{'darkMode':true,'background':'#0d1220','fontSize':'14px','primaryColor':'#0c2a44','primaryBorderColor':'#38bdf8','primaryTextColor':'#eaf2fb','lineColor':'#8b95ad'}}}%%
+flowchart TB
+  classDef accent fill:#07382b,stroke:#34d399,color:#6ee7b7
+  classDef app fill:#0c2a44,stroke:#38bdf8,color:#bae6fd
+  classDef data fill:#2a1d52,stroke:#a78bfa,color:#ddd6fe
+  classDef external fill:#1c2230,stroke:#64748b,color:#cbd5e1
+  ROOT["src/"]
+  ROOT --> APP["app/"]
+  ROOT --> FEAT["features/"]
+  ROOT --> COMP["components/"]
+  ROOT --> TRPC["trpc/"]
+  ROOT --> DB["db/"]
+  ROOT --> LIB["lib/"]
+  ROOT --> ING["inngest/"]
+  class ROOT accent
+  class APP,COMP,FEAT,TRPC,LIB app
+  class DB data
+  class ING external
+```
+
+Diagrams are Mermaid — they render inline on GitHub. Run `/arch-diagram` to refresh them when the structure changes.
 
 ---
 
