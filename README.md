@@ -45,12 +45,12 @@ Aether Flow is a Next.js 16 App Router application organised into three layers: 
 ### System architecture
 
 ```mermaid
-%%{init: {'flowchart':{'htmlLabels':false,'padding':16,'nodeSpacing':55,'rankSpacing':80,'curve':'basis','subGraphTitleMargin':{'top':14,'bottom':8}},'theme':'base','themeVariables':{'darkMode':true,'background':'#0d1220','fontSize':'15px','primaryColor':'#0c2a44','primaryBorderColor':'#38bdf8','primaryTextColor':'#eaf2fb','lineColor':'#8b95ad','clusterBkg':'#141a2a','clusterBorder':'#2a3346','clusterTextColor':'#c3ccdc','edgeLabelBackground':'#0d1220'}}}%%
+%%{init: {'flowchart':{'htmlLabels':false,'padding':16,'nodeSpacing':65,'rankSpacing':95,'curve':'basis','subGraphTitleMargin':{'top':14,'bottom':8}},'themeVariables':{'fontSize':'15px','clusterBkg':'#64748b1a','clusterBorder':'#64748b40'}}}%%
 flowchart TB
-  classDef accent fill:#07382b,stroke:#34d399,color:#6ee7b7
-  classDef app fill:#0c2a44,stroke:#38bdf8,color:#bae6fd
-  classDef data fill:#2a1d52,stroke:#a78bfa,color:#ddd6fe
-  classDef external fill:#1c2230,stroke:#64748b,color:#cbd5e1
+  classDef accent stroke:#10b981,stroke-width:2px,fill:#10b98124
+  classDef app stroke:#3b82f6,stroke-width:2px,fill:#3b82f624
+  classDef data stroke:#8b5cf6,stroke-width:2px,fill:#8b5cf624
+  classDef external stroke:#94a3b8,stroke-width:2px,fill:#94a3b824
   subgraph Browser
     UI["Next.js UI"]
   end
@@ -69,16 +69,15 @@ flowchart TB
   AI["AI providers"]
   POLAR["Polar"]
   SENTRY["Sentry"]
-  UI --> RSC
   UI -->|HTTP| TRPC
-  UI --> AUTH
+  RSC --> ORM
   TRPC --> ORM
   AUTH --> ORM
   ORM --> PG
   TRPC -. enqueue .-> JOBS
   JOBS -->|AI SDK| AI
-  AUTH <--> POLAR
-  RSC -.-> SENTRY
+  AUTH <-->|OAuth| POLAR
+  RSC -. errors .-> SENTRY
   class UI accent
   class RSC,TRPC,AUTH,JOBS app
   class ORM,PG data
@@ -131,11 +130,11 @@ flowchart TB
 ### Data flow
 
 ```mermaid
-%%{init: {'flowchart':{'htmlLabels':false,'padding':22,'nodeSpacing':70,'rankSpacing':110,'curve':'basis'},'theme':'base','themeVariables':{'darkMode':true,'background':'#0d1220','fontSize':'15px','primaryColor':'#0c2a44','primaryBorderColor':'#38bdf8','primaryTextColor':'#eaf2fb','lineColor':'#8b95ad','edgeLabelBackground':'#0d1220'}}}%%
+%%{init: {'flowchart':{'htmlLabels':false,'padding':22,'nodeSpacing':70,'rankSpacing':110,'curve':'basis'},'themeVariables':{'fontSize':'15px'}}}%%
 flowchart LR
-  classDef accent fill:#07382b,stroke:#34d399,color:#6ee7b7
-  classDef app fill:#0c2a44,stroke:#38bdf8,color:#bae6fd
-  classDef data fill:#2a1d52,stroke:#a78bfa,color:#ddd6fe
+  classDef accent stroke:#10b981,stroke-width:2px,fill:#10b98124
+  classDef app stroke:#3b82f6,stroke-width:2px,fill:#3b82f624
+  classDef data stroke:#8b5cf6,stroke-width:2px,fill:#8b5cf624
   B["Browser"]:::accent
   N["Next.js server"]:::app
   A["tRPC API"]:::app
@@ -151,12 +150,12 @@ flowchart LR
 ### Folder structure
 
 ```mermaid
-%%{init: {'flowchart':{'htmlLabels':false,'padding':14,'nodeSpacing':45,'rankSpacing':60},'theme':'base','themeVariables':{'darkMode':true,'background':'#0d1220','fontSize':'14px','primaryColor':'#0c2a44','primaryBorderColor':'#38bdf8','primaryTextColor':'#eaf2fb','lineColor':'#8b95ad'}}}%%
+%%{init: {'flowchart':{'htmlLabels':false,'padding':14,'nodeSpacing':45,'rankSpacing':60},'themeVariables':{'fontSize':'14px'}}}%%
 flowchart TB
-  classDef accent fill:#07382b,stroke:#34d399,color:#6ee7b7
-  classDef app fill:#0c2a44,stroke:#38bdf8,color:#bae6fd
-  classDef data fill:#2a1d52,stroke:#a78bfa,color:#ddd6fe
-  classDef external fill:#1c2230,stroke:#64748b,color:#cbd5e1
+  classDef accent stroke:#10b981,stroke-width:2px,fill:#10b98124
+  classDef app stroke:#3b82f6,stroke-width:2px,fill:#3b82f624
+  classDef data stroke:#8b5cf6,stroke-width:2px,fill:#8b5cf624
+  classDef external stroke:#94a3b8,stroke-width:2px,fill:#94a3b824
   ROOT["src/"]
   ROOT --> APP["app/"]
   ROOT --> FEAT["features/"]
@@ -171,7 +170,7 @@ flowchart TB
   class ING external
 ```
 
-Diagrams are Mermaid — they render inline on GitHub. Run `/arch-diagram` to refresh them when the structure changes.
+Diagrams are Mermaid — they render inline on GitHub and adapt to light/dark mode. Run `/arch-diagram` to refresh them when the structure changes.
 
 ---
 
